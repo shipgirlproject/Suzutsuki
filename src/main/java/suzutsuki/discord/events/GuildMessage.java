@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import suzutsuki.discord.SuzutsukiDiscord;
 import suzutsuki.util.SuzutsukiConfig;
 
+import javax.annotation.Nonnull;
+
 public class GuildMessage extends ListenerAdapter {
     private final SuzutsukiDiscord suzutsukiDiscord;
     private final SuzutsukiConfig suzutsukiConfig;
@@ -15,7 +17,7 @@ public class GuildMessage extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+    public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
         // soon
     }
 }

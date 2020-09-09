@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import suzutsuki.discord.SuzutsukiDiscord;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
 public class Ready extends ListenerAdapter {
@@ -21,7 +22,7 @@ public class Ready extends ListenerAdapter {
     }
 
     @Override
-    public void onReady(ReadyEvent event) {
+    public void onReady(@Nonnull ReadyEvent event) {
         suzutsukiDiscord.scheduler.scheduleAtFixedRate(
                 this::updateStatus,
                 0,
