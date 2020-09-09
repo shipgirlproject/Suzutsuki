@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import org.slf4j.Logger;
 import suzutsuki.discord.events.GuildMemberRoleAdd;
 import suzutsuki.discord.events.GuildMessage;
 import suzutsuki.discord.events.Ready;
@@ -17,24 +18,19 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class SuzutsukiDiscord {
     private final SuzutsukiConfig suzutsukiConfig;
+    public final Logger suzutsukiLog;
     public final ScheduledExecutorService scheduler;
     public final JDA client;
 
-    public SuzutsukiDiscord(SuzutsukiConfig suzutsukiConfig) throws LoginException {
+    public SuzutsukiDiscord(SuzutsukiConfig suzutsukiConfig, Logger suzutsukiLog) throws LoginException {
         this.suzutsukiConfig = suzutsukiConfig;
+        this.suzutsukiLog = suzutsukiLog;
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
         this.client = JDABuilder.createDefault(suzutsukiConfig.token)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .disableIntents(
-                        GatewayIntent.DIRECT_MESSAGE_TYPING,
-                        GatewayIntent.DIRECT_MESSAGE_REACTIONS,
-                        GatewayIntent.DIRECT_MESSAGES,
-                        GatewayIntent.GUILD_PRESENCES,
-                        GatewayIntent.GUILD_MESSAGE_REACTIONS,
-                        GatewayIntent.GUILD_MESSAGE_TYPING,
-                        GatewayIntent.GUILD_VOICE_STATES,
-                        GatewayIntent.GUILD_EMOJIS,
-                        GatewayIntent.GUILD_BANS
+                .enableIntents(
+                        GatewayIntent.GUILD_MEMBERS,
+                        GatewayIntent.GUILD_MESSAGES
                 )
                 .disableCache(
                         CacheFlag.ACTIVITY,
@@ -51,6 +47,7 @@ public class SuzutsukiDiscord {
                 new GuildMessage(this, suzutsukiConfig),
                 new GuildMemberRoleAdd(this.suzutsukiConfig)
         );
+        suzutsukiLog.info("Events are now loaded!");
         return this;
     }
 

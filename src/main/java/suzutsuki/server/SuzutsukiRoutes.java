@@ -22,17 +22,22 @@ public class SuzutsukiRoutes {
         this.suzutsukiConfig = suzutsukiConfig;
     }
 
+    public void triggerFail(RoutingContext context) {
+        suzutsukiDiscord.suzutsukiLog.error("Error in handling a REST Request: ", context.failure());
+        context.response().setStatusCode(context.statusCode()).end();
+    }
+
     public void trigger(String endpoint, RoutingContext context) {
         HttpServerRequest request = context.request();
         HttpServerResponse response = context.response();
         String auth = request.getHeader("authorization");
         if (auth == null || !auth.equals(suzutsukiConfig.pass)) {
-            response.setStatusCode(401).setStatusMessage("Unauthorized").end();
+            context.fail(401);
             return;
         }
         Guild guild = suzutsukiDiscord.client.getGuildById(suzutsukiConfig.guildID);
         if (guild == null) {
-            response.setStatusCode(500).setStatusMessage("Guild not found").end();
+            context.fail(500);
             return;
         }
         switch (endpoint) {

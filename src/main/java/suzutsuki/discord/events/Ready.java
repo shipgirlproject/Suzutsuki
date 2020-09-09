@@ -23,12 +23,8 @@ public class Ready extends ListenerAdapter {
 
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
-        suzutsukiDiscord.scheduler.scheduleAtFixedRate(
-                this::updateStatus,
-                0,
-                120,
-                TimeUnit.SECONDS
-        );
+        suzutsukiDiscord.scheduler.scheduleAtFixedRate(this::updateStatus, 0, 120, TimeUnit.SECONDS);
+        suzutsukiDiscord.suzutsukiLog.info(suzutsukiDiscord.client.getSelfUser().getAsTag() + " is now ready!");
     }
 
     private void updateStatus() {
