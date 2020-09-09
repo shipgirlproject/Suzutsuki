@@ -113,6 +113,8 @@ dist
 build/*
 .gradle/*
 !gradle/wrapper/gradle-wrapper.jar
+config.json
+
 # Compiled class file
 *.class
 
