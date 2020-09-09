@@ -7,6 +7,7 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.StaticHandler;
 import org.slf4j.Logger;
 import suzutsuki.discord.SuzutsukiDiscord;
 import suzutsuki.util.SuzutsukiConfig;
@@ -43,6 +44,10 @@ public class SuzutsukiServer {
         apiRoutes.route(HttpMethod.GET, "/currentPatreons")
                 .produces("application/json")
                 .blockingHandler((RoutingContext context) -> suzutsukiRoutes.trigger("currentPatreons", context), false)
+                .failureHandler(suzutsukiRoutes::triggerFail)
+                .enable();
+        apiRoutes.route("/*")
+                .handler(StaticHandler.create().setIndexPage("index.html"))
                 .failureHandler(suzutsukiRoutes::triggerFail)
                 .enable();
         routePrefix.mountSubRouter(suzutsukiConfig.routePrefix, apiRoutes);

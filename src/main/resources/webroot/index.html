@@ -1,14 +1,28 @@
-@charset "UTF-8";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Suzutsuki</title>
+</head>
+<style>
 html {
 	font-size: 62.5%;
 }
 
 body {
+    background-color: #282828;
 	font-size: 1.4rem;
 }
 
-
-/* =14px */
+.footer {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #282828;
+  text-align: center;
+  font-family: Helvetica;
+  color: #ffffff;
+}
 
 h1 {
 	font-size: 2.4rem;
@@ -23,16 +37,26 @@ h1 {
 
 .landing-page-container {
 	width: 100%;
-	height: 90rem;
-	background-image: url("https://raw.githubusercontent.com/Deivu/Suzutsuki/master/assets/cover.png");
+	height: 75rem;
+	background-image: url("https://vignette.wikia.nocookie.net/kancolle/images/3/31/Suzutsuki_Kai_Full.png/revision/latest?cb=20181029142346");
 	background-repeat: no-repeat;
 	background-size: contain;
-	background-position: bottom;
+	background-position: 27%;
 	overflow: hidden;
-	font-family: 'Montserrat', sans-serif;
+	font-family: 'Arial', Helvetica;
 	color: #ffffff;
 }
-
+.landing-page-container-2 {
+	width: 100%;
+	height: 75rem;
+	background-image: url("https://vignette.wikia.nocookie.net/kancolle/images/8/83/Suzutsuki_Kai_Summer_Full.png/revision/latest/");
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: 70%;
+	overflow: hidden;
+	font-family: 'Arial', Helvetica;
+	color: #ffffff;
+}
 .content__wrapper {
 	max-width: 1200px;
 	width: 90%;
@@ -46,7 +70,7 @@ h1 {
 	height: 2rem;
 	padding: 4.5rem 0;
 	display: block;
-	font-family: letter gothic std;
+	font-family: Helvetica;
 }
 
 .menu-icon {
@@ -245,7 +269,7 @@ h1 {
 }
 
 .scroller .page-title {
-	font-family: letter gothic std;
+	font-family: Helvetica;
 	letter-spacing: 0.5rem;
 	display: inline-block;
 	float: left;
@@ -330,3 +354,46 @@ h1 {
 		transform: rotate(360deg);
 	}
 }
+</style>
+<body>
+  <div class="container">
+    <br>
+	<br>
+    <div class="container__item landing-page-container">
+	  <div class="container__item landing-page-container-2">
+        <div class="content__wrapper">
+          <div class="ellipses-container">
+            <p class="greeting">
+		    <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+		    <br>
+            &nbsp;Suzutsuki
+		    </p>
+            <div class="ellipses ellipses__outer--thin">
+              <div class="ellipses ellipses__orbit"></div>
+            </div>
+            <div class="ellipses ellipses__outer--thick"></div>
+          </div>
+          <div class="scroller">
+            <p class="page-title"></p>
+            <div class="timeline"></div>
+          </div>
+	    </div>
+	  </div>
+    </div>
+  </div>
+  <div class="footer">
+    <a href="https://github.com/Deivu/Suzutsuki">
+	  <img src="https://i.imgur.com/SbMGPjU.png" alt="Github" style="width:128px;height:128px;">
+	</a>
+	<br>
+	© Kancolle
+  </div>
+</body>
+</html>
