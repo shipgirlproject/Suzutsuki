@@ -1,0 +1,19 @@
+{
+  "port": 1024,
+  "threads": 12,
+  "commandPrefix": "*",
+  "token": "",
+  "pass": "",
+  "routePrefix": "/",
+  "guildID":  "423116740810244097",
+  "annoucementChannelID": "537501421931855882",
+  "donatorRoleID": "503792855110909966",
+  "boomersRoleID": "585637278106517526",
+  "patreonGlobalRoleID": "546195459002204183",
+  "patreonTiers": {
+    "heroes": "465016501020393472",
+    "specials": "447188525763526668",
+    "benefactors": "435408701407363072",
+    "contributors": "616920026087161877"
+  }
+}

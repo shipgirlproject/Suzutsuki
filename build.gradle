@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+}
+
+group 'suzutuski'
+version '0.0.1'
+
+sourceCompatibility = 1.9
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'suzutsuki.SuzutsukiClient'
+        )
+    }
+    archiveName 'suzutsuki.jar'
+    from {
+        configurations
+                .compile
+                .findAll { !it.name.endsWith('pom') }
+                .collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile("net.dv8tion:JDA:4.2.0_204")
+    compile("io.vertx:vertx-core:3.9.2")
+    compile ('io.vertx:vertx-web:3.9.2')
+    compile("org.json:json:20180813")
+}
