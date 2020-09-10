@@ -18,6 +18,20 @@ public class GuildMessage extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
-        // soon
+        if (event.isWebhookMessage() || event.getAuthor().isBot()) return;
+        String content = event.getMessage().getContentRaw();
+        if (!content.startsWith(suzutsukiConfig.commandPrefix)) return;
+        String[] args = content.split("\\s+");
+        String command = args[0].substring(suzutsukiConfig.commandPrefix.length());
+        /*
+        / To be honest, just a little something ¯\_(ツ)_/¯
+        */
+        switch (command) {
+            case "ping":
+                event.getChannel().sendMessage("Pong! Took `" + suzutsukiDiscord.client.getGatewayPing() + "ms`").queue();
+                break;
+            case "pong":
+                event.getChannel().sendMessage("Ping! Took `" + suzutsukiDiscord.client.getGatewayPing() + "ms`").queue();
+        }
     }
 }

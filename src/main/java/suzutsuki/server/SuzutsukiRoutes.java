@@ -23,8 +23,14 @@ public class SuzutsukiRoutes {
     }
 
     public void triggerFail(RoutingContext context) {
-        suzutsukiDiscord.suzutsukiLog.error("Error in handling a REST Request: ", context.failure());
-        context.response().setStatusCode(context.statusCode()).end();
+        Throwable throwable = context.failure();
+        HttpServerResponse response = context.response();
+        if (throwable != null) {
+            suzutsukiDiscord.suzutsukiLog.error("Failed REST Request; Error: ", context.failure());
+        } else {
+            suzutsukiDiscord.suzutsukiLog.warn("Failed REST Request; Code: " + context.statusCode() + " Reason: " + response.getStatusMessage());
+        }
+        response.setStatusCode(context.statusCode()).end();
     }
 
     public void trigger(String endpoint, RoutingContext context) {
@@ -32,17 +38,19 @@ public class SuzutsukiRoutes {
         HttpServerResponse response = context.response();
         String auth = request.getHeader("authorization");
         if (auth == null || !auth.equals(suzutsukiConfig.pass)) {
+            response.setStatusMessage("Unauthorized");
             context.fail(401);
             return;
         }
         Guild guild = suzutsukiDiscord.client.getGuildById(suzutsukiConfig.guildID);
         if (guild == null) {
+            response.setStatusMessage("Internal Server Error");
             context.fail(500);
             return;
         }
         switch (endpoint) {
             case "checkPatreonStatus":
-                checkPatreonStatus(guild, request, response);
+                checkPatreonStatus(guild, request, response, context);
                 break;
             case "checkDonatorStatus":
                 checkDonatorStatus(guild, request, response);
@@ -52,7 +60,7 @@ public class SuzutsukiRoutes {
         }
     }
 
-    public void checkPatreonStatus(Guild guild, HttpServerRequest request, HttpServerResponse response) {
+    public void checkPatreonStatus(Guild guild, HttpServerRequest request, HttpServerResponse response, RoutingContext context) {
         String userID = request.getParam("user_id");
         if (userID == null) {
             JsonObject json = new JsonObject()
@@ -112,7 +120,8 @@ public class SuzutsukiRoutes {
             response.end(json.toString());
             return;
         }
-        response.setStatusCode(404).setStatusMessage("User has Patreons role but not assigned in any tiers").end();
+        response.setStatusMessage("User has Patreons role, but is not assigned in any tiers");
+        context.fail(501);
     }
 
     public void checkDonatorStatus(Guild guild, HttpServerRequest request, HttpServerResponse response) {
