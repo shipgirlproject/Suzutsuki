@@ -29,12 +29,13 @@ public class SuzutsukiRoutes {
     public void triggerFail(RoutingContext context) {
         Throwable throwable = context.failure();
         HttpServerResponse response = context.response();
+        int statusCode = context.statusCode();
         if (throwable != null) {
-            suzutsukiDiscord.suzutsukiLog.error("Failed REST Request; Error: ", context.failure());
+            suzutsukiDiscord.suzutsukiLog.error("Failed REST Request; Error: ", throwable);
         } else {
-            suzutsukiDiscord.suzutsukiLog.warn("Failed REST Request; Code: " + context.statusCode() + " Reason: " + response.getStatusMessage());
+            suzutsukiDiscord.suzutsukiLog.warn("Failed REST Request; Code: " + statusCode + " Reason: " + response.getStatusMessage());
         }
-        response.setStatusCode(context.statusCode()).end();
+        response.setStatusCode(statusCode).end();
     }
 
     public void trigger(String endpoint, RoutingContext context) {

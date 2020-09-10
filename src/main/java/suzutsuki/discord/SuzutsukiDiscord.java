@@ -30,13 +30,11 @@ public class SuzutsukiDiscord {
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(
                         GatewayIntent.GUILD_MEMBERS,
-                        GatewayIntent.GUILD_MESSAGES
-                )
+                        GatewayIntent.GUILD_MESSAGES )
                 .disableCache(
                         CacheFlag.ACTIVITY,
                         CacheFlag.EMOTE,
-                        CacheFlag.VOICE_STATE
-                )
+                        CacheFlag.VOICE_STATE )
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .build();
     }
