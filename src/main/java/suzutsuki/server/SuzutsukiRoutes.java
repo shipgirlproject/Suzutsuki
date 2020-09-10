@@ -2,15 +2,19 @@ package suzutsuki.server;
 
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import org.json.JSONArray;
 import suzutsuki.discord.SuzutsukiDiscord;
 import suzutsuki.struct.PatreonList;
 import suzutsuki.util.SuzutsukiConfig;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SuzutsukiRoutes {
@@ -61,10 +65,10 @@ public class SuzutsukiRoutes {
     }
 
     public void checkPatreonStatus(Guild guild, HttpServerRequest request, HttpServerResponse response, RoutingContext context) {
-        String userID = request.getParam("user_id");
+        String userID = request.getParam("id");
         if (userID == null) {
             JsonObject json = new JsonObject()
-                    .put("id", "Unknown")
+                    .put("id", "Unknown User")
                     .put("status", false);
             response.end(json.toString());
             return;
@@ -77,9 +81,9 @@ public class SuzutsukiRoutes {
             response.end(json.toString());
             return;
         }
-        Stream<Role> roles = member.getRoles().stream();
-        if (roles.noneMatch(role -> role.getId().equals(suzutsukiConfig.patreonGlobalRoleID))) {
-            if (roles.anyMatch(role -> role.getId().equals(suzutsukiConfig.boomersRoleID))) {
+        List<Role> roles = member.getRoles();
+        if (roles.stream().noneMatch(role -> role.getId().equals(suzutsukiConfig.patreonGlobalRoleID))) {
+            if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.boomersRoleID))) {
                 JsonObject json = new JsonObject()
                         .put("id", userID)
                         .put("status", "NitroBoosters");
@@ -92,28 +96,28 @@ public class SuzutsukiRoutes {
             response.end(json.toString());
             return;
         }
-        if (roles.anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.heroes))) {
+        if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.heroes))) {
             JsonObject json = new JsonObject()
                     .put("id", userID)
                     .put("status", "Heroes");
             response.end(json.toString());
             return;
         }
-        if (roles.anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.specials))) {
+        if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.specials))) {
             JsonObject json = new JsonObject()
                     .put("id", userID)
                     .put("status", "Specials");
             response.end(json.toString());
             return;
         }
-        if (roles.anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.benefactors))) {
+        if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.benefactors))) {
             JsonObject json = new JsonObject()
                     .put("id", userID)
                     .put("status", "Benefactors");
             response.end(json.toString());
             return;
         }
-        if (roles.anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.contributors))) {
+        if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.contributors))) {
             JsonObject json = new JsonObject()
                     .put("id", userID)
                     .put("status", "Contributors");
@@ -125,10 +129,10 @@ public class SuzutsukiRoutes {
     }
 
     public void checkDonatorStatus(Guild guild, HttpServerRequest request, HttpServerResponse response) {
-        String userID = request.getParam("user_id");
+        String userID = request.getParam("id");
         if (userID == null) {
             JsonObject json = new JsonObject()
-                    .put("id", "Unknown")
+                    .put("id", "Unknown User")
                     .put("status", false);
             response.end(json.toString());
             return;
@@ -141,8 +145,7 @@ public class SuzutsukiRoutes {
             response.end(json.toString());
             return;
         }
-        Stream<Role> roles = member.getRoles().stream();
-        if (roles.noneMatch(role -> role.getId().equals(suzutsukiConfig.donatorRoleID))) {
+        if (member.getRoles().stream().noneMatch(role -> role.getId().equals(suzutsukiConfig.donatorRoleID))) {
             JsonObject json = new JsonObject()
                     .put("id", userID)
                     .put("status", false);
@@ -156,35 +159,36 @@ public class SuzutsukiRoutes {
     }
 
     public void currentPatreons(Guild guild, HttpServerResponse response) {
-        Stream<Member> members = guild
+        List<Member> members = guild
                 .getMemberCache()
                 .stream()
                 .filter(member -> member
                         .getRoles()
                         .stream()
-                        .anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonGlobalRoleID)) );
-        Stream<Member> heroes = members.filter(member -> member
+                        .anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonGlobalRoleID)) )
+                .collect(Collectors.toList());
+        Stream<Member> heroes = members.stream().filter(member -> member
                 .getRoles()
                 .stream()
                 .anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.heroes)) );
-        Stream<Member> specials = members.filter(member -> member
+        Stream<Member> specials =members.stream().filter(member -> member
                 .getRoles()
                 .stream()
                 .anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.specials)) );
-        Stream<Member> benefactors = members.filter(member -> member
+        Stream<Member> benefactors = members.stream().filter(member -> member
                 .getRoles()
                 .stream()
                 .anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.benefactors)) );
-        Stream<Member> contributors = members.filter(member -> member
+        Stream<Member> contributors = members.stream().filter(member -> member
                 .getRoles()
                 .stream()
                 .anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.contributors)) );
         PatreonList list = new PatreonList(heroes, specials, benefactors, contributors);
         JsonObject json = new JsonObject()
-                .put("Heroes", list.heroes.toArray())
-                .put("Specials", list.specials.toArray())
-                .put("Benefactors", list.benefactors.toArray())
-                .put("Contributors", list.contributors.toArray());
+                .put("Heroes", new JsonArray(list.heroes.collect(Collectors.toList())) )
+                .put("Specials", new JsonArray(list.specials.collect(Collectors.toList())) )
+                .put("Benefactors", new JsonArray(list.benefactors.collect(Collectors.toList())) )
+                .put("Contributors", new JsonArray(list.contributors.collect(Collectors.toList())) );
         response.end(json.toString());
     }
 }
