@@ -84,13 +84,6 @@ public class SuzutsukiRoutes {
         }
         List<Role> roles = member.getRoles();
         if (roles.stream().noneMatch(role -> role.getId().equals(suzutsukiConfig.patreonGlobalRoleID))) {
-            if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.boomersRoleID))) {
-                JsonObject json = new JsonObject()
-                        .put("id", userID)
-                        .put("status", "NitroBoosters");
-                response.end(json.toString());
-                return;
-            }
             JsonObject json = new JsonObject()
                     .put("id", userID)
                     .put("status", false);

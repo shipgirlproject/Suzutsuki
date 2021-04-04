@@ -31,7 +31,7 @@ jar {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile("net.dv8tion:JDA:4.2.0_204")
+    compile("net.dv8tion:JDA:4.2.1_253")
     compile("io.vertx:vertx-core:3.9.2")
     compile ('io.vertx:vertx-web:3.9.2')
     compile("org.json:json:20180813")
