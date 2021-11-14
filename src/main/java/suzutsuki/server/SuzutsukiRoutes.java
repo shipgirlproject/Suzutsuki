@@ -8,7 +8,6 @@ import io.vertx.ext.web.RoutingContext;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import org.json.JSONArray;
 import suzutsuki.discord.SuzutsukiDiscord;
 import suzutsuki.struct.PatreonList;
 import suzutsuki.util.SuzutsukiConfig;
