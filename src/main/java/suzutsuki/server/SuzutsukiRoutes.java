@@ -54,13 +54,10 @@ public class SuzutsukiRoutes {
             return;
         }
         switch (endpoint) {
-            case "checkPatreonStatus":
+            case "/patreons/check":
                 checkPatreonStatus(guild, request, response, context);
                 break;
-            case "checkDonatorStatus":
-                checkDonatorStatus(guild, request, response);
-                break;
-            case "currentPatreons":
+            case "/patreons":
                 currentPatreons(guild, response);
         }
     }
@@ -120,36 +117,6 @@ public class SuzutsukiRoutes {
         }
         response.setStatusMessage("User has Patreons role, but is not assigned in any tiers");
         context.fail(501);
-    }
-
-    public void checkDonatorStatus(Guild guild, HttpServerRequest request, HttpServerResponse response) {
-        String userID = request.getParam("id");
-        if (userID == null) {
-            JsonObject json = new JsonObject()
-                    .put("id", "Unknown User")
-                    .put("status", false);
-            response.end(json.toString());
-            return;
-        }
-        Member member = guild.getMemberById(userID);
-        if (member == null) {
-            JsonObject json = new JsonObject()
-                    .put("id", userID)
-                    .put("status", false);
-            response.end(json.toString());
-            return;
-        }
-        if (member.getRoles().stream().noneMatch(role -> role.getId().equals(suzutsukiConfig.donatorRoleID))) {
-            JsonObject json = new JsonObject()
-                    .put("id", userID)
-                    .put("status", false);
-            response.end(json.toString());
-            return;
-        }
-        JsonObject json = new JsonObject()
-                .put("id", userID)
-                .put("status", true);
-        response.end(json.toString());
     }
 
     public void currentPatreons(Guild guild, HttpServerResponse response) {

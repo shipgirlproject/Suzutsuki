@@ -31,19 +31,14 @@ public class SuzutsukiServer {
     }
 
     public SuzutsukiServer loadRoutes() {
-        apiRoutes.route(HttpMethod.GET, "/checkPatreonStatus")
+        apiRoutes.route(HttpMethod.GET, "/patreons/check")
                 .produces("application/json")
-                .blockingHandler((RoutingContext context) -> suzutsukiRoutes.trigger("checkPatreonStatus", context), false)
+                .blockingHandler((RoutingContext context) -> suzutsukiRoutes.trigger("/patreons/check", context), false)
                 .failureHandler(suzutsukiRoutes::triggerFail)
                 .enable();
-        apiRoutes.route(HttpMethod.GET, "/checkDonatorStatus")
+        apiRoutes.route(HttpMethod.GET, "/patreons")
                 .produces("application/json")
-                .blockingHandler((RoutingContext context) -> suzutsukiRoutes.trigger("checkDonatorStatus", context), false)
-                .failureHandler(suzutsukiRoutes::triggerFail)
-                .enable();
-        apiRoutes.route(HttpMethod.GET, "/currentPatreons")
-                .produces("application/json")
-                .blockingHandler((RoutingContext context) -> suzutsukiRoutes.trigger("currentPatreons", context), false)
+                .blockingHandler((RoutingContext context) -> suzutsukiRoutes.trigger("/patreons", context), false)
                 .failureHandler(suzutsukiRoutes::triggerFail)
                 .enable();
         apiRoutes.route("/*")

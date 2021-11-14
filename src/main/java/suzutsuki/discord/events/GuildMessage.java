@@ -24,7 +24,7 @@ public class GuildMessage extends ListenerAdapter {
         String[] args = content.split("\\s+");
         String command = args[0].substring(suzutsukiConfig.commandPrefix.length());
         /*
-        / To be honest, just a little something ¯\_(ツ)_/¯
+        / To be honest, just a little something
         */
         switch (command) {
             case "ping":
