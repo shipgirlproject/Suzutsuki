@@ -79,13 +79,6 @@ public class SuzutsukiRoutes {
             return;
         }
         List<Role> roles = member.getRoles();
-        if (roles.stream().noneMatch(role -> role.getId().equals(suzutsukiConfig.patreonGlobalRoleID))) {
-            JsonObject json = new JsonObject()
-                    .put("id", userID)
-                    .put("status", false);
-            response.end(json.toString());
-            return;
-        }
         if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.heroes))) {
             JsonObject json = new JsonObject()
                     .put("id", userID)
@@ -114,8 +107,10 @@ public class SuzutsukiRoutes {
             response.end(json.toString());
             return;
         }
-        response.setStatusMessage("User has Patreons role, but is not assigned in any tiers");
-        context.fail(501);
+        JsonObject json = new JsonObject()
+                .put("id", userID)
+                .put("status", false);
+        response.end(json.toString());
     }
 
     public void currentPatreons(Guild guild, HttpServerResponse response) {
