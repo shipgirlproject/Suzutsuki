@@ -62,54 +62,31 @@ public class SuzutsukiRoutes {
     }
 
     public void checkPatreonStatus(Guild guild, HttpServerRequest request, HttpServerResponse response, RoutingContext context) {
-        String userID = request.getParam("id");
-        if (userID == null) {
-            JsonObject json = new JsonObject()
-                    .put("id", "Unknown User")
-                    .put("status", false);
-            response.end(json.toString());
-            return;
+        String userId = request.getParam("id");
+        JsonObject json = new JsonObject().put("id", userId);
+        runnable: {
+            if (userId == null) {
+                json.putNull("status");
+                break runnable;
+            }
+            Member member = guild.getMemberById(userId);
+            if (member == null) {
+                json.putNull("status");
+                break runnable;
+            }
+            List<Role> roles = member.getRoles();
+            if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.heroes)))
+                json.put("status", "Heroes");
+            else if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.specials)))
+                json.put("status", "Specials");
+            else if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.benefactors)) ||
+                    roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.boosters)))
+                json.put("status", "Benefactors");
+            else if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.contributors)))
+                json.put("status", "Contributors");
+            else
+                json.putNull("status");
         }
-        Member member = guild.getMemberById(userID);
-        if (member == null) {
-            JsonObject json = new JsonObject()
-                    .put("id", userID)
-                    .put("status", false);
-            response.end(json.toString());
-            return;
-        }
-        List<Role> roles = member.getRoles();
-        if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.heroes))) {
-            JsonObject json = new JsonObject()
-                    .put("id", userID)
-                    .put("status", "Heroes");
-            response.end(json.toString());
-            return;
-        }
-        if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.specials))) {
-            JsonObject json = new JsonObject()
-                    .put("id", userID)
-                    .put("status", "Specials");
-            response.end(json.toString());
-            return;
-        }
-        if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.benefactors))) {
-            JsonObject json = new JsonObject()
-                    .put("id", userID)
-                    .put("status", "Benefactors");
-            response.end(json.toString());
-            return;
-        }
-        if (roles.stream().anyMatch(role -> role.getId().equals(suzutsukiConfig.patreonTiers.contributors))) {
-            JsonObject json = new JsonObject()
-                    .put("id", userID)
-                    .put("status", "Contributors");
-            response.end(json.toString());
-            return;
-        }
-        JsonObject json = new JsonObject()
-                .put("id", userID)
-                .put("status", false);
         response.end(json.toString());
     }
 

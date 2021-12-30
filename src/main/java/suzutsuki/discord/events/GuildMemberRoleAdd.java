@@ -7,7 +7,9 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import suzutsuki.util.SuzutsukiConfig;
 
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class GuildMemberRoleAdd extends ListenerAdapter {
     private final SuzutsukiConfig suzutsukiConfig;
@@ -22,12 +24,22 @@ public class GuildMemberRoleAdd extends ListenerAdapter {
         if (!guild.getId().equals(suzutsukiConfig.guildID)) return;
         TextChannel channel = guild.getTextChannelById(suzutsukiConfig.annoucementChannelID);
         if (channel == null) return;
-        Stream<Role> roles = event.getRoles().stream();
-        Role role = roles
-                .filter(r -> r.getId().equals(suzutsukiConfig.patreonTiers.heroes) || r.getId().equals(suzutsukiConfig.patreonTiers.specials) || r.getId().equals(suzutsukiConfig.patreonTiers.benefactors) || r.getId().equals(suzutsukiConfig.patreonTiers.contributors))
-                .findFirst()
-                .orElse(null);
-        if (role == null) return;
-        channel.sendMessage("<a:too_hype:480054627820371977> " + event.getUser().getAsMention() + " became a Patreon! Thanks for the support \\❤").queue();
+        CompletableFuture
+                .delayedExecutor(10, TimeUnit.SECONDS)
+                .execute(() -> {
+                    List<Role> roles = event.getRoles();
+                    if (roles.stream().noneMatch(role -> role.getId().equals(suzutsukiConfig.patreonGlobalRoleID))) return;
+                    Role role = roles.stream()
+                            .filter(r ->
+                                    r.getId().equals(suzutsukiConfig.patreonTiers.heroes) ||
+                                            r.getId().equals(suzutsukiConfig.patreonTiers.specials) ||
+                                            r.getId().equals(suzutsukiConfig.patreonTiers.benefactors) ||
+                                            r.getId().equals(suzutsukiConfig.patreonTiers.contributors))
+                            .findFirst()
+                            .orElse(null);
+                    if (role == null) return;
+                    channel.sendMessage("<a:too_hype:480054627820371977> " + event.getUser().getAsMention() + " became a Patreon! Thanks for the support \\❤").queue();
+                });
+
     }
 }
