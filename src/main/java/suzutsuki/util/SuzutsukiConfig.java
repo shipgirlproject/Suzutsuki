@@ -4,6 +4,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import suzutsuki.SuzutsukiClient;
 import suzutsuki.struct.PatreonTiers;
+import suzutsuki.struct.StaticUserIds;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,14 +25,12 @@ public class SuzutsukiConfig {
     public final String boomersRoleID;
     public final String patreonGlobalRoleID;
     public final PatreonTiers patreonTiers;
-
+    public final StaticUserIds statisIds;
 
     public SuzutsukiConfig() throws FileNotFoundException, URISyntaxException {
         File file = new File(SuzutsukiClient.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         String directory = file.getPath().replace(file.getName(), "");
         InputStream is = new FileInputStream(directory + "config.json");
-        //noinspection ConstantConditions
-        if (is == null) throw new NullPointerException("Cannot find config.json");
         JSONObject config = new JSONObject(new JSONTokener(is));
         port = config.getInt("port");
         threads = config.getInt("threads");
@@ -45,5 +44,6 @@ public class SuzutsukiConfig {
         boomersRoleID = config.getString("boomersRoleID");
         patreonGlobalRoleID = config.getString("patreonGlobalRoleID");
         patreonTiers = new PatreonTiers(config.getJSONObject("patreonTiers"));
+        statisIds = new StaticUserIds(config.getJSONObject("miscIds"));
     }
 }

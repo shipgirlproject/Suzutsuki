@@ -8,8 +8,10 @@ import io.vertx.ext.web.RoutingContext;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
 import suzutsuki.discord.SuzutsukiDiscord;
 import suzutsuki.struct.PatreonList;
+import suzutsuki.struct.StaticUserIds;
 import suzutsuki.util.SuzutsukiConfig;
 
 import java.util.List;
@@ -41,7 +43,7 @@ public class SuzutsukiRoutes {
         HttpServerRequest request = context.request();
         HttpServerResponse response = context.response();
         String auth = request.getHeader("authorization");
-        if (auth == null || !auth.equals(suzutsukiConfig.pass)) {
+        if (endpoint != "/avatars" && (auth == null || !auth.equals(suzutsukiConfig.pass))) {
             response.setStatusMessage("Unauthorized");
             context.fail(401);
             return;
@@ -58,6 +60,9 @@ public class SuzutsukiRoutes {
                 break;
             case "/patreons":
                 currentPatreons(guild, response);
+                break;
+            case "/avatars":
+                getAvatars(response);
         }
     }
 
@@ -121,6 +126,23 @@ public class SuzutsukiRoutes {
                 .put("Specials", new JsonArray(list.specials.collect(Collectors.toList())) )
                 .put("Benefactors", new JsonArray(list.benefactors.collect(Collectors.toList())) )
                 .put("Contributors", new JsonArray(list.contributors.collect(Collectors.toList())) );
+        response.end(json.toString());
+    }
+
+    public void getAvatars(HttpServerResponse response) {
+        StaticUserIds ids = this.suzutsukiConfig.statisIds;
+        User[] users = { 
+            this.suzutsukiDiscord.client.getUserById(ids.saya),
+            this.suzutsukiDiscord.client.getUserById(ids.takase),
+            this.suzutsukiDiscord.client.getUserById(ids.rattley),
+            this.suzutsukiDiscord.client.getUserById(ids.alex),
+            this.suzutsukiDiscord.client.getUserById(ids.yanga)
+        };
+
+        JsonObject json = new JsonObject();
+        for (User user : users) {
+            json.put(user.getId(), user.getEffectiveAvatarUrl() + "?size=512"); 
+        }
         response.end(json.toString());
     }
 }

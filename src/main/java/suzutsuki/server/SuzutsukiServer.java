@@ -32,19 +32,24 @@ public class SuzutsukiServer {
 
     public SuzutsukiServer loadRoutes() {
         apiRoutes.route(HttpMethod.GET, "/patreons/check")
-                .produces("application/json")
-                .blockingHandler((RoutingContext context) -> suzutsukiRoutes.trigger("/patreons/check", context), false)
-                .failureHandler(suzutsukiRoutes::triggerFail)
-                .enable();
+            .produces("application/json")
+            .blockingHandler((RoutingContext context) -> suzutsukiRoutes.trigger("/patreons/check", context), false)
+            .failureHandler(suzutsukiRoutes::triggerFail)
+            .enable();
         apiRoutes.route(HttpMethod.GET, "/patreons")
-                .produces("application/json")
-                .blockingHandler((RoutingContext context) -> suzutsukiRoutes.trigger("/patreons", context), false)
-                .failureHandler(suzutsukiRoutes::triggerFail)
-                .enable();
+            .produces("application/json")
+            .blockingHandler((RoutingContext context) -> suzutsukiRoutes.trigger("/patreons", context), false)
+            .failureHandler(suzutsukiRoutes::triggerFail)
+            .enable();
+        apiRoutes.route(HttpMethod.GET, "/avatars")
+            .produces("application/json")
+            .blockingHandler((RoutingContext context) -> suzutsukiRoutes.trigger("/avatars", context), false)
+            .failureHandler(suzutsukiRoutes::triggerFail)
+            .enable();
         apiRoutes.route("/*")
-                .handler(StaticHandler.create().setIndexPage("index.html"))
-                .failureHandler(suzutsukiRoutes::triggerFail)
-                .enable();
+            .handler(StaticHandler.create().setIndexPage("index.html"))
+            .failureHandler(suzutsukiRoutes::triggerFail)
+            .enable();
         routePrefix.mountSubRouter(suzutsukiConfig.routePrefix, apiRoutes);
         suzutsukiLog.info("API routes configured & loaded");
         return this;
