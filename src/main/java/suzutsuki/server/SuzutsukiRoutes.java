@@ -136,7 +136,8 @@ public class SuzutsukiRoutes {
             this.suzutsukiDiscord.client.getUserById(ids.takase),
             this.suzutsukiDiscord.client.getUserById(ids.rattley),
             this.suzutsukiDiscord.client.getUserById(ids.alex),
-            this.suzutsukiDiscord.client.getUserById(ids.yanga)
+            this.suzutsukiDiscord.client.getUserById(ids.yanga),
+            this.suzutsukiDiscord.client.getUserById(ids.keita)
         };
 
         JsonObject json = new JsonObject();
