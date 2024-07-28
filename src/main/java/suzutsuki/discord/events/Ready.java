@@ -2,13 +2,12 @@ package suzutsuki.discord.events;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 
@@ -30,7 +29,7 @@ public class Ready extends ListenerAdapter {
     }
 
     @Override
-    public void onReady(@Nonnull ReadyEvent event) {
+    public void onReady(ReadyEvent event) {
         this.scheduler.scheduleAtFixedRate(this::updateStatus, 0, 120, TimeUnit.SECONDS);
         this.logger.info(client.getSelfUser().getAsTag() + " is now ready!");
     }

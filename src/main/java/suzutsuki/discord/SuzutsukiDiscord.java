@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
-import suzutsuki.discord.events.GuildMessage;
+import suzutsuki.discord.events.MessageReceived;
 import suzutsuki.discord.events.Ready;
 import suzutsuki.util.SuzutsukiConfig;
 
@@ -22,11 +22,20 @@ public class SuzutsukiDiscord {
             .setMemberCachePolicy(MemberCachePolicy.ALL)
             .enableIntents(
                 GatewayIntent.GUILD_MEMBERS,
-                GatewayIntent.GUILD_MESSAGES )
+                GatewayIntent.GUILD_MESSAGES,
+                GatewayIntent.MESSAGE_CONTENT
+            )
             .disableCache(
                 CacheFlag.ACTIVITY,
-                CacheFlag.EMOTE,
-                CacheFlag.VOICE_STATE)
+                CacheFlag.CLIENT_STATUS,
+                CacheFlag.EMOJI,
+                CacheFlag.FORUM_TAGS,
+                CacheFlag.ONLINE_STATUS,
+                CacheFlag.ROLE_TAGS,
+                CacheFlag.SCHEDULED_EVENTS,
+                CacheFlag.STICKER,
+                CacheFlag.VOICE_STATE
+            )
             .setChunkingFilter(ChunkingFilter.ALL)
             .build();
 
@@ -34,7 +43,7 @@ public class SuzutsukiDiscord {
 
         client.addEventListener(
             new Ready(client, logger, scheduler),
-            new GuildMessage(config, client, executor)
+            new MessageReceived(config, client, executor)
         );
 
         logger.info("Event Listeners are loaded!");
