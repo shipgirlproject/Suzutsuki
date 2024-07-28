@@ -1,41 +1,42 @@
 import java.text.SimpleDateFormat
 
 plugins {
-    id 'java'
+    id "java"
 }
 
-version = '2.0.0'
+version = "2.0.0"
 
-archivesBaseName = 'suzutsuki'
+archivesBaseName = "suzutsuki"
 
-compileJava.options.encoding = 'UTF-8'
+compileJava.options.encoding = "UTF-8"
 
 repositories {
     mavenCentral()
     maven {
-        name 'm2-dv8tion'
-        url 'https://m2.dv8tion.net/releases'
+        name "m2-dv8tion"
+        url "https://m2.dv8tion.net/releases"
     }
 }
 
 dependencies {
-    testImplementation("junit:junit4.12")
+    testImplementation("junit:junit:4.12")
     implementation("net.dv8tion:JDA:4.3.0_277")
     implementation("io.vertx:vertx-core:3.9.2")
-    implementation('io.vertx:vertx-web:3.9.2')
-    implementation('org.json:json:20210307')
-    implementation('org.slf4j:slf4j-api:1.7.32')
-    implementation('org.slf4j:slf4j-log4j12:1.7.32')
+    implementation("io.vertx:vertx-web:3.9.2")
+    implementation("io.vertx:vertx-web-client:3.9.2")
+    implementation("org.json:json:20210307")
+    implementation("org.slf4j:slf4j-api:1.7.32")
+    implementation("org.slf4j:slf4j-log4j12:1.7.32")
 }
 
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes(
-            'Main-Class': 'suzutsuki.SuzutsukiClient',
-            'Build-Timestamp': new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
-            'Implementation-Title': 'Suzutsuki',
-            'Implementation-Version': version
+            "Main-Class": "suzutsuki.SuzutsukiClient",
+            "Build-Timestamp": new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+            "Implementation-Title": "Suzutsuki",
+            "Implementation-Version": version
         )
     }
     from {

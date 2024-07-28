@@ -1,4 +1,4 @@
-package suzutsuki.struct;
+package suzutsuki.struct.rest;
 
 import org.json.JSONObject;
 

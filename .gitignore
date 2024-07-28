@@ -29,6 +29,8 @@ hs_err_pid*
 .gradle
 .vscode
 bin
+config.json
 
-# Unignore gradle-wrapper.jar
+# Unignore the ff files
 !/gradle/wrapper/gradle-wrapper.jar
+!/example/config.json

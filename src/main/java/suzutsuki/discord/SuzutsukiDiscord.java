@@ -7,50 +7,40 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
-import suzutsuki.discord.events.GuildMemberRoleAdd;
 import suzutsuki.discord.events.GuildMessage;
 import suzutsuki.discord.events.Ready;
 import suzutsuki.util.SuzutsukiConfig;
 
 import javax.security.auth.login.LoginException;
-import java.util.concurrent.Executors;
+
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class SuzutsukiDiscord {
-    private final SuzutsukiConfig suzutsukiConfig;
-    public final Logger suzutsukiLog;
-    public final ScheduledExecutorService scheduler;
-    public final JDA client;
+    public static JDA create(SuzutsukiConfig config, Logger logger, ExecutorService executor, ScheduledExecutorService scheduler) throws LoginException, InterruptedException {
+        JDA client = JDABuilder.createDefault(config.token)
+            .setMemberCachePolicy(MemberCachePolicy.ALL)
+            .enableIntents(
+                GatewayIntent.GUILD_MEMBERS,
+                GatewayIntent.GUILD_MESSAGES )
+            .disableCache(
+                CacheFlag.ACTIVITY,
+                CacheFlag.EMOTE,
+                CacheFlag.VOICE_STATE)
+            .setChunkingFilter(ChunkingFilter.ALL)
+            .build();
 
-    public SuzutsukiDiscord(SuzutsukiConfig suzutsukiConfig, Logger suzutsukiLog) throws LoginException {
-        this.suzutsukiConfig = suzutsukiConfig;
-        this.suzutsukiLog = suzutsukiLog;
-        this.scheduler = Executors.newSingleThreadScheduledExecutor();
-        this.client = JDABuilder.createDefault(suzutsukiConfig.token)
-                .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .enableIntents(
-                        GatewayIntent.GUILD_MEMBERS,
-                        GatewayIntent.GUILD_MESSAGES )
-                .disableCache(
-                        CacheFlag.ACTIVITY,
-                        CacheFlag.EMOTE,
-                        CacheFlag.VOICE_STATE )
-                .setChunkingFilter(ChunkingFilter.ALL)
-                .build();
-    }
+        logger.info("JDA Client built!");
 
-    public SuzutsukiDiscord loadSuzutsuki() {
         client.addEventListener(
-                new Ready(this),
-                new GuildMessage(this, suzutsukiConfig),
-                new GuildMemberRoleAdd(this.suzutsukiConfig)
+            new Ready(client, logger, scheduler),
+            new GuildMessage(config, client, executor)
         );
-        suzutsukiLog.info("Events are now loaded!");
-        return this;
-    }
 
-    public SuzutsukiDiscord awaitForReady() throws InterruptedException {
+        logger.info("Event Listeners are loaded!");
+
         client.awaitReady();
-        return this;
+
+        return client;
     }
 }
