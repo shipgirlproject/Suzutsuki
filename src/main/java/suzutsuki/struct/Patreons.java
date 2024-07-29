@@ -2,7 +2,6 @@ package suzutsuki.struct;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import suzutsuki.struct.patreon.User;
 import suzutsuki.struct.patreon.relationships.Relationship;
@@ -36,28 +35,31 @@ public class Patreons {
             Relationship relationship = this.relationships
                 .stream()
                 .filter(Relationship::hasPatreonUserId)
-                .filter(r -> user.id == r.relationships.user.data.id)
+                .filter(r -> user.id.equals(r.relationships.user.data.id))
                 .findFirst()
                 .orElse(null);
+
             if (relationship == null) continue;
 
-            Stream<Data> subscription = relationship.relationships.currentlyEntitledTiers.data.stream();
+            List<Data> subscription = relationship.relationships.currentlyEntitledTiers.data;
+
+            if (subscription.size() == 0) continue;
 
             String userId = user.attributes.socialConnections.discord.userId;
 
-            if (subscription.filter(d -> d.id == PatreonTierId.heroes).findFirst().orElse(null) != null) {
+            if (subscription.stream().filter(d -> PatreonTierId.heroes.equals(d.id)).findFirst().orElse(null) != null) {
                 this.heroes.add(userId);
                 continue;
             }
-            if (subscription.filter(d -> d.id == PatreonTierId.specials).findFirst().orElse(null) != null) {
+            if (subscription.stream().filter(d -> PatreonTierId.specials.equals(d.id)).findFirst().orElse(null) != null) {
                 this.specials.add(userId);
                 continue;
             }
-            if (subscription.filter(d -> d.id == PatreonRoleId.benefactors).findFirst().orElse(null) != null) {
+            if (subscription.stream().filter(d -> PatreonTierId.benefactors.equals(d.id)).findFirst().orElse(null) != null) {
                 this.benefactors.add(userId);
                 continue;
             }
-            if (subscription.filter(d -> d.id == PatreonRoleId.contributors).findFirst().orElse(null) != null) {
+            if (subscription.stream().filter(d -> PatreonTierId.contributors.equals(d.id)).findFirst().orElse(null) != null) {
                 this.contributors.add(userId);
                 continue;
             }

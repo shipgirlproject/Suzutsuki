@@ -3,6 +3,7 @@ package suzutsuki;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +24,8 @@ public class SuzutsukiClient {
         Logger logger = LoggerFactory.getLogger(SuzutsukiClient.class);
         Vertx vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(config.threads));
         ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(config.threads);
-        SuzutsukiPatreonClient patreonClient = new SuzutsukiPatreonClient(vertx, config, scheduler);
+        ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(config.threads);
+        SuzutsukiPatreonClient patreonClient = new SuzutsukiPatreonClient(vertx, logger, config, scheduler);
         JDA client = SuzutsukiDiscord.create(config, logger, executor, scheduler);
 
         new SuzutsukiServer(vertx, client, config, logger, patreonClient)

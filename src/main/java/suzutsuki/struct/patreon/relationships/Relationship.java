@@ -1,10 +1,12 @@
 package suzutsuki.struct.patreon.relationships;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import suzutsuki.struct.patreon.Attributes;
 
 @JsonAutoDetect
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Relationship {
     public Attributes attributes;
     public String id;

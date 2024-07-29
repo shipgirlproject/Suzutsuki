@@ -16,6 +16,7 @@ import suzutsuki.util.SuzutsukiConfig;
 import suzutsuki.util.SuzutsukiPatreonClient;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 
@@ -51,11 +52,11 @@ public class SuzutsukiRoutes {
         HttpServerResponse response = context.response();
         String auth = request.getHeader("authorization");
 
-        if (endpoint != "/avatars" && (auth == null || !auth.equals(this.config.pass))) {
+        /*if (endpoint != "/avatars" && (auth == null || !auth.equals(this.config.pass))) {
             response.setStatusMessage("Unauthorized");
             context.fail(401);
             return;
-        }
+        }*/
 
         Guild guild = this.client.getGuildById(this.config.guildId);
         if (guild == null) {
@@ -87,7 +88,7 @@ public class SuzutsukiRoutes {
             }
 
             Patreons patreons = this.patreonClient.getPatreons();
-            
+
             if (this.isTieredPatreon(userId, patreons.heroes)) {
                 json.put("status", "Heroes");
             } else if (this.isTieredPatreon(userId, patreons.specials)) {
@@ -143,13 +144,13 @@ public class SuzutsukiRoutes {
     private boolean isTieredPatreon(String userId, List<String> patreons) {
         return patreons
             .stream()
-            .anyMatch(id -> id == userId);
+            .anyMatch(id -> userId.equals(id));
     }
 
     private List<PatreonUser> getPatreonUsers(Guild guild, List<String> patreons) {
         return patreons.stream()
             .map(id -> guild.getMemberById(id))
-            .filter(member -> member != null)
+            .filter(Objects::nonNull)
             .map(member -> new PatreonUser(member.getId(), member.getUser().getName()))
             .toList();
     }

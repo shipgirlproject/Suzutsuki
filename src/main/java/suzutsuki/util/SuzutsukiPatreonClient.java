@@ -1,5 +1,7 @@
 package suzutsuki.util;
 
+import org.slf4j.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -9,29 +11,33 @@ import java.util.concurrent.TimeUnit;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
-
 import suzutsuki.struct.Patreons;
 import suzutsuki.struct.patreon.User;
 import suzutsuki.struct.patreon.relationships.Relationship;
 
 public class SuzutsukiPatreonClient {
+    private final Logger logger;
     private final SuzutsukiConfig suzutsukiConfig;
     private final String url;
     private final WebClient client;
-    private Patreons patreons;
+    private volatile Patreons patreons;
 
-    public SuzutsukiPatreonClient(Vertx vertx, SuzutsukiConfig suzutsukiConfig, ScheduledExecutorService scheduler) {
+    public SuzutsukiPatreonClient(Vertx vertx, Logger logger, SuzutsukiConfig suzutsukiConfig, ScheduledExecutorService scheduler) {
+        this.logger = logger;
         this.suzutsukiConfig = suzutsukiConfig;
         this.url = "https://www.patreon.com/api/oauth2/v2/campaigns/1877973/members?include=currently_entitled_tiers,user&fields%5Buser%5D=social_connections&page%5Bsize%5D=10000";
         this.client = WebClient.create(vertx, new WebClientOptions());
         this.patreons = new Patreons(new ArrayList<>(), new ArrayList<>());
 
-        scheduler.scheduleAtFixedRate(this::fetch, 0, 30, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(() -> HandleThread.error(this::fetch, this.logger), 0, 30, TimeUnit.SECONDS);
+
+        this.logger.info("Patreon now scheduled to run!");
     }
 
     public Patreons getPatreons() {
@@ -85,7 +91,7 @@ public class SuzutsukiPatreonClient {
 
     private JsonObject get(String url) {
         CompletableFuture<HttpResponse<Buffer>> future  = new CompletableFuture<>();
-        this.client.get(url)
+        this.client.requestAbs(HttpMethod.GET, url)
             .putHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
             .putHeader("Authorization", "Bearer " + this.suzutsukiConfig.patreon)
             .send(response -> this.handleResult(future, response));
