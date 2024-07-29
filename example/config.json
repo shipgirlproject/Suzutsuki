@@ -1,19 +1,25 @@
 {
+  "debug": false,
   "port": 1024,
   "threads": 12,
+  "tokens": {
+    "bot": "",
+    "rest": "",
+    "patreon": ""
+  },
   "prefix": "*",
-  "token": "",
-  "pass": "",
-  "patreon": "",
   "guildId":  "423116740810244097",
   "annoucementChannelId": "537501421931855882",
   "donatorRoleId": "503792855110909966",
   "boostersRoleId": "585637278106517526",
-  "miscIds": {
-    "saya": "325231623262044162",
-    "takase": "373409581973504000",
-    "rattley": "379928776857092097",
-    "alex": "113390394884030464",
-    "yanga": "234752951887855616"
-  }
+  "patreonIgnoreRoleId": "1048231291113439313",
+  "patreonGlobalRoleId": "546195459002204183",
+  "patreonTiers": [
+    { "name": "Heroes", "discordRoleId": "465016501020393472", "patreonTierId": "2727995" },
+    { "name": "Specials", "discordRoleId": "447188525763526668", "patreonTierId": "2727980" },
+    { "name": "Benefactors", "discordRoleId": "435408701407363072", "patreonTierId": "2727976" },
+    { "name": "Contributors", "discordRoleId": "616920026087161877", "patreonTierId": "2727973" }
+  ],
+  "patreonCheckHonorsRole": false,
+  "avatarUserIds": ["325231623262044162", "373409581973504000", "379928776857092097", "113390394884030464", "234752951887855616", "292273255346339840"]
 }

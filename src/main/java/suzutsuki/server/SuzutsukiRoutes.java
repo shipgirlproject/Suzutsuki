@@ -7,16 +7,15 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-
-import suzutsuki.struct.Patreons;
-import suzutsuki.struct.rest.PatreonUser;
-import suzutsuki.struct.rest.StaticUserIds;
-import suzutsuki.util.SuzutsukiConfig;
+import suzutsuki.struct.config.SuzutsukiConfig;
+import suzutsuki.struct.patreon.Patreon;
+import suzutsuki.struct.patreon.Patreons;
+import suzutsuki.struct.patreon.tiers.PatreonTier;
 import suzutsuki.util.SuzutsukiPatreonClient;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.slf4j.Logger;
 
@@ -24,13 +23,13 @@ public class SuzutsukiRoutes {
     private final Logger logger;
     private final JDA client;
     private final SuzutsukiConfig config;
-    private final SuzutsukiPatreonClient patreonClient;
+    private final SuzutsukiPatreonClient patreon;
 
-    public SuzutsukiRoutes(Logger logger, JDA client, SuzutsukiConfig config, SuzutsukiPatreonClient patreonClient) {
+    public SuzutsukiRoutes(Logger logger, JDA client, SuzutsukiConfig config, SuzutsukiPatreonClient patreon) {
         this.logger = logger;
         this.client = client;
         this.config = config;
-        this.patreonClient = patreonClient;
+        this.patreon = patreon;
     }
 
     public void triggerFail(RoutingContext context) {
@@ -52,7 +51,7 @@ public class SuzutsukiRoutes {
         HttpServerResponse response = context.response();
         String auth = request.getHeader("authorization");
 
-        /*if (endpoint != "/avatars" && (auth == null || !auth.equals(this.config.pass))) {
+        /*if (endpoint != "/avatars" && (auth == null || !auth.equals(this.config.tokens.getRest()))) {
             response.setStatusMessage("Unauthorized");
             context.fail(401);
             return;
@@ -81,77 +80,69 @@ public class SuzutsukiRoutes {
         String userId = request.getParam("id");
         JsonObject json = new JsonObject().put("id", userId);
 
-        runnable: {
-            if (userId == null) {
-                json.putNull("status");
-                break runnable;
-            }
+        if (userId == null) {
+            json.putNull("status");
+            response.end(json.toString());
+            return;
+        }
 
-            Patreons patreons = this.patreonClient.getPatreons();
+        Patreons patreons = this.patreon.getPatreons();
 
-            if (this.isTieredPatreon(userId, patreons.heroes)) {
-                json.put("status", "Heroes");
-            } else if (this.isTieredPatreon(userId, patreons.specials)) {
-                json.put("status", "Specials");
-            } else if (this.isTieredPatreon(userId, patreons.benefactors)) {
-                json.put("status", "Benefactors");
-            } else if (this.isTieredPatreon(userId, patreons.contributors)) {
-                json.put("status", "Contributors");
-            } else {
-                json.putNull("status");
-            }
+        Patreon result = patreons.tiered
+            .stream()
+            .filter(patreon -> userId.equals(patreon.userId))
+            .findFirst()
+            .orElse(null);
+        
+        if (result == null) {
+            json.putNull("status");
+        } else {
+            json.put("status", result.tierName);
         }
 
         response.end(json.toString());
     }
 
     public void currentPatreons(Guild guild, HttpServerResponse response) {
-        Patreons patreons = this.patreonClient.getPatreons();
+        JsonObject json = new JsonObject();
 
-        List<PatreonUser> heroes = this.getPatreonUsers(guild, patreons.heroes);
-        List<PatreonUser> specials = this.getPatreonUsers(guild, patreons.specials);
-        List<PatreonUser> benefactors = this.getPatreonUsers(guild, patreons.benefactors);
-        List<PatreonUser> contributors = this.getPatreonUsers(guild, patreons.contributors);
+        List<PatreonTier> tiers = this.patreon.getTiers();
+        Patreons patreons = this.patreon.getPatreons();
 
-        JsonObject json = new JsonObject()
-            .put("Heroes", new JsonArray(heroes))
-            .put("Specials", new JsonArray(specials))
-            .put("Benefactors", new JsonArray(benefactors))
-            .put("Contributors", new JsonArray(contributors));
+        for (PatreonTier tier : tiers) {
+            JsonArray array = new JsonArray();
+
+            for (Patreon patreon : patreons.tiered) {
+                if (!tier.getPatreonTierId().equals(patreon.tierId)) continue;
+
+                Member member = guild.getMemberById(patreon.userId);
+
+                JsonObject user = new JsonObject()
+                    .put("id", patreon.userId);
+                
+                if (member == null) {
+                    user.putNull("username");
+                } else {
+                    user.put("username", member.getEffectiveName());
+                }
+
+                array.add(user);
+            }
+
+            json.put(tier.getTierName(), array);
+        }
         
         response.end(json.toString());
     }
 
     public void getAvatars(HttpServerResponse response) {
-        // refactor in near future
-        StaticUserIds ids = this.config.staticIds;
-        User[] users = { 
-            this.client.getUserById(ids.saya),
-            this.client.getUserById(ids.takase),
-            this.client.getUserById(ids.rattley),
-            this.client.getUserById(ids.alex),
-            this.client.getUserById(ids.yanga),
-            this.client.getUserById(ids.keita)
-        };
-
+        List<String> ids = this.config.avatarUserIds;
         JsonObject json = new JsonObject();
-        for (User user : users) {
+        for (String id : ids) {
+            User user = this.client.getUserById(id);
+            if (user == null) continue;
             json.put(user.getId(), user.getEffectiveAvatarUrl() + "?size=512"); 
         }
         response.end(json.toString());
-    }
-
-    private boolean isTieredPatreon(String userId, List<String> patreons) {
-        return patreons
-            .stream()
-            .anyMatch(id -> userId.equals(id));
-    }
-
-    private List<PatreonUser> getPatreonUsers(Guild guild, List<String> patreons) {
-        return patreons.stream()
-            .map(id -> guild.getMemberById(id))
-            .filter(Objects::nonNull)
-            .map(member -> new PatreonUser(member.getId(), member.getUser().getName()))
-            .toList();
     }
 }

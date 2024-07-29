@@ -9,16 +9,14 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import suzutsuki.discord.events.MessageReceived;
 import suzutsuki.discord.events.Ready;
-import suzutsuki.util.SuzutsukiConfig;
+import suzutsuki.struct.config.SuzutsukiConfig;
+import suzutsuki.util.Threads;
 
 import javax.security.auth.login.LoginException;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-
 public class SuzutsukiDiscord {
-    public static JDA create(SuzutsukiConfig config, Logger logger, ExecutorService executor, ScheduledExecutorService scheduler) throws LoginException, InterruptedException {
-        JDA client = JDABuilder.createDefault(config.token)
+    public static JDA create(SuzutsukiConfig config, Logger logger, Threads threads) throws LoginException, InterruptedException {
+        JDA client = JDABuilder.createDefault(config.tokens.getBot())
             .setMemberCachePolicy(MemberCachePolicy.ALL)
             .enableIntents(
                 GatewayIntent.GUILD_MEMBERS,
@@ -42,8 +40,8 @@ public class SuzutsukiDiscord {
         logger.info("JDA Client built!");
 
         client.addEventListener(
-            new Ready(client, logger, scheduler),
-            new MessageReceived(config, client, executor)
+            new Ready(client, logger, threads),
+            new MessageReceived(client, logger, threads, config)
         );
 
         logger.info("Event Listeners are loaded!");

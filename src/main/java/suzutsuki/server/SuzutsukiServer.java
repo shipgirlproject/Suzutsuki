@@ -10,7 +10,8 @@ import io.vertx.ext.web.handler.StaticHandler;
 import net.dv8tion.jda.api.JDA;
 
 import org.slf4j.Logger;
-import suzutsuki.util.SuzutsukiConfig;
+
+import suzutsuki.struct.config.SuzutsukiConfig;
 import suzutsuki.util.SuzutsukiPatreonClient;
 
 public class SuzutsukiServer {
@@ -18,17 +19,19 @@ public class SuzutsukiServer {
     private final HttpServer server;
     private final Router router;
     private final SuzutsukiRoutes routes;
-    public final Logger logger;
+    private final Logger logger;
 
-    public SuzutsukiServer(Vertx vertx, JDA client, SuzutsukiConfig config, Logger logger, SuzutsukiPatreonClient patreonClient) {
+    public SuzutsukiServer(Vertx vertx, JDA client, Logger logger, SuzutsukiPatreonClient patreon, SuzutsukiConfig config) {
         this.config = config;
         this.logger = logger;
         this.server = vertx.createHttpServer();
         this.router = Router.router(vertx);
-        this.routes = new SuzutsukiRoutes(logger, client, config, patreonClient);
+        this.routes = new SuzutsukiRoutes(logger, client, config, patreon);
+        this.loadRoutes();
+        this.startServer();
     }
 
-    public SuzutsukiServer loadRoutes() {
+    private void loadRoutes() {
         this.router.route(HttpMethod.GET, "/patreons/check")
             .produces("application/json")
             .blockingHandler((RoutingContext context) -> this.routes.trigger("/patreons/check", context), false)
@@ -49,10 +52,9 @@ public class SuzutsukiServer {
             .failureHandler(this.routes::triggerFail)
             .enable();
         this.logger.info("API routes configured & loaded");
-        return this;
     }
 
-    public void startServer() {
+    private void startServer() {
         server.requestHandler(this.router).listen(this.config.port);
         this.logger.info("API routes set & running @ localhost:" + this.config.port);
     }

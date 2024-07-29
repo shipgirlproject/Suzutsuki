@@ -3,24 +3,28 @@ package suzutsuki.discord.events;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import suzutsuki.util.SuzutsukiConfig;
+import suzutsuki.struct.config.SuzutsukiConfig;
+import suzutsuki.util.HandleThread;
+import suzutsuki.util.Threads;
 
-import java.util.concurrent.ExecutorService;
+import org.slf4j.Logger;
 
 public class MessageReceived extends ListenerAdapter {
     private final SuzutsukiConfig config;
+    private final Logger logger;
     private final JDA client;
-    private final ExecutorService executor;
+    private final Threads threads;
     
-    public MessageReceived(SuzutsukiConfig config, JDA client, ExecutorService executor) {
+    public MessageReceived(JDA client, Logger logger, Threads threads, SuzutsukiConfig config) {
         this.config = config;
+        this.logger = logger;
         this.client = client;
-        this.executor = executor;
+        this.threads = threads;
     }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        this.executor.execute(() -> this.handleMessage(event));
+        this.threads.virtual.execute(() -> HandleThread.error(() -> this.handleMessage(event), this.logger));
     }
 
     public void handleMessage(MessageReceivedEvent event) {

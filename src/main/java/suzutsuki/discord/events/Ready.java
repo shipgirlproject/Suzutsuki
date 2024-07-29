@@ -4,8 +4,8 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import suzutsuki.util.Threads;
 
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 
 public class Ready extends ListenerAdapter {
     private final JDA client;
-    private final ScheduledExecutorService scheduler;
+    private final Threads threads;
     private final Logger logger;
     private final String[] status = {
             "Suzutsuki, heading out!",
@@ -22,15 +22,15 @@ public class Ready extends ListenerAdapter {
     };
     private int counter = 0;
 
-    public Ready(JDA client, Logger logger, ScheduledExecutorService scheduler) {
+    public Ready(JDA client, Logger logger, Threads threads) {
         this.client = client;
         this.logger = logger;
-        this.scheduler = scheduler;
+        this.threads = threads;
     }
 
     @Override
     public void onReady(ReadyEvent event) {
-        this.scheduler.scheduleAtFixedRate(this::updateStatus, 0, 120, TimeUnit.SECONDS);
+        this.threads.scheduled.scheduleAtFixedRate(this::updateStatus, 0, 120, TimeUnit.SECONDS);
         this.logger.info(client.getSelfUser().getAsTag() + " is now ready!");
     }
 
