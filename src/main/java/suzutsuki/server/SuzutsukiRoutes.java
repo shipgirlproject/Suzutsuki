@@ -51,11 +51,11 @@ public class SuzutsukiRoutes {
         HttpServerResponse response = context.response();
         String auth = request.getHeader("authorization");
 
-        /*if (endpoint != "/avatars" && (auth == null || !auth.equals(this.config.tokens.getRest()))) {
+        if (endpoint != "/avatars" && (auth == null || !auth.equals(this.config.tokens.getRest()))) {
             response.setStatusMessage("Unauthorized");
             context.fail(401);
             return;
-        }*/
+        }
 
         Guild guild = this.client.getGuildById(this.config.guildId);
         if (guild == null) {
