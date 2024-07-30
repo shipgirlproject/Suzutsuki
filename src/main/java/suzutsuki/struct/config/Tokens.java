@@ -2,19 +2,13 @@ package suzutsuki.struct.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 @JsonAutoDetect
 public class Tokens {
-    private final String bot;
-    private final String rest;
-    private final String patreon;
-
-    public Tokens(@JsonProperty("bot") String bot, @JsonProperty("rest") String rest, @JsonProperty("patreon") String patreon) {
-        this.bot = bot;
-        this.rest = rest;
-        this.patreon = patreon;
-    }
+    private String bot;
+    private String rest;
+    private String patreon;
 
     @JsonGetter("bot")
     public String getBot() {
@@ -29,5 +23,20 @@ public class Tokens {
     @JsonGetter("patreon") 
     public String getPatreon() {
         return this.patreon;
+    }
+
+    @JsonSetter("bot")
+    public String setBot(String token) {
+        return this.bot = token;
+    }
+
+    @JsonSetter("rest")
+    public String setRest(String token) {
+        return this.rest = token;
+    }
+
+    @JsonSetter("patreon") 
+    public String setPatreon(String token) {
+        return this.patreon = token;
     }
 }

@@ -38,7 +38,7 @@ public class SuzutsukiRoleManager {
         Guild guild = this.client.getGuildById(this.config.guildId);
 
         if (guild == null) {
-            this.logger.info("Notice: Guild (" + this.config.guildId + ") not found. Can\'t execute patreon checks");
+            this.logger.debug("Guild (" + this.config.guildId + ") not found. Can\'t execute patreon checks");
             return;
         }
 
@@ -51,16 +51,20 @@ public class SuzutsukiRoleManager {
             Member member = guild.getMemberById(patreon.userId);
 
             if (member == null) {
-                this.logger.info("Notice: User (" + patreon.userId + ") => Not found can\'t add Patreon Roles");
+                this.logger.debug("User (" + patreon.userId + ") => Not found as member can\'t add Patreon Roles");
                 continue;
             }
 
             List<Role> roles = member.getRoles();
 
             // do not do anything on a member with patreon ignore role
-            if (this.config.patreonIgnoreRoleId != null && roles.stream().anyMatch(role -> role.getId().equals(this.config.patreonIgnoreRoleId))) continue;
+            if (this.config.patreonIgnoreRoleId != null && roles.stream().anyMatch(role -> role.getId().equals(this.config.patreonIgnoreRoleId))) {
+                this.logger.debug("User @" + member.getEffectiveName() + "(" + member.getUser().getId() + ") has patreon ignore role. Not adding anything");
+                continue;
+            }
 
             // check and add global patreon role
+            Boolean didAddGlobal = false;
             if (this.config.patreonGlobalRoleId != null && roles.stream().noneMatch(role -> role.getId().equals(this.config.patreonGlobalRoleId))) {
                 Role role = guild.getRoles()
                     .stream()
@@ -69,8 +73,8 @@ public class SuzutsukiRoleManager {
                     .orElse(null);
                 
                 if (role != null) {
-                    guild.addRoleToMember(member, role).queue();
-                    this.logger.info("Notice: Added Global Patreon (" + role.getName() +") Role | User: @" + member.getEffectiveName());
+                    this.addRole(guild, member, role);
+                    didAddGlobal = true;
                 }
             }
 
@@ -91,8 +95,9 @@ public class SuzutsukiRoleManager {
                 
                 if (role == null) continue;
 
-                guild.addRoleToMember(member, role).queue();
-                this.logger.info("Notice: Added Patreon (" + role.getName() +") Role | User: @" + member.getEffectiveName());
+                this.addRole(guild, member, role);
+                
+                this.logger.info("New patreon! Added Role: (" + role.getName() +") | Global Role Added: " + didAddGlobal  + " | User: @" + member.getEffectiveName() + "(" + member.getUser().getId() + ")");
             }
         }
     }
@@ -109,9 +114,13 @@ public class SuzutsukiRoleManager {
             List<Role> roles = member.getRoles();
 
             // do not do anything on a member with patreon ignore role
-            if (this.config.patreonIgnoreRoleId != null && roles.stream().anyMatch(role -> role.getId().equals(this.config.patreonIgnoreRoleId))) continue;
+            if (this.config.patreonIgnoreRoleId != null && roles.stream().anyMatch(role -> role.getId().equals(this.config.patreonIgnoreRoleId))) {
+                this.logger.debug("User @" + member.getEffectiveName() + "(" + member.getUser().getId() + ") has patreon ignore role. Not removing anything");
+                continue;
+            }
 
             // check and remove global patreon role
+            Boolean didRemoveGlobal = false;
             if (this.config.patreonGlobalRoleId != null && roles.stream().anyMatch(r -> r.getId().equals(this.config.patreonGlobalRoleId))) {
                 Role role = guild.getRoles()
                     .stream()
@@ -120,12 +129,12 @@ public class SuzutsukiRoleManager {
                     .orElse(null);
                 
                 if (role != null) {
-                    guild.removeRoleFromMember(member, role).queue();
-                    this.logger.info("Notice: Removed Global Patreon (" + role.getName() +") Role | User: @" + member.getEffectiveName());
+                    this.removeRole(guild, member, role);
+                    didRemoveGlobal = true;
                 }
             }
 
-            Role role = member.getRoles()
+            Role role = roles
                 .stream()
                 .filter(r -> tiers.stream().anyMatch(tier -> tier.getDiscordRoleId().equals(r.getId())))
                 .findFirst()
@@ -133,8 +142,19 @@ public class SuzutsukiRoleManager {
             
             if (role == null) continue;
             
-            guild.removeRoleFromMember(member, role).queue();
-            this.logger.info("Notice: Removed Patreon (" + role.getName() +") Role | User: @" + member.getEffectiveName());
+            this.removeRole(guild, member, role);
+
+            this.logger.info("Removed patreon! Removed Role: (" + role.getName() +") | Global Role Removed: " + didRemoveGlobal + " | User: @" + member.getEffectiveName() + "(" + member.getUser().getId() + ")");
         }
+    }
+
+    private void addRole(Guild guild, Member member, Role role) {
+        if (this.config.disable.roleAdd) return;
+        guild.addRoleToMember(member, role).queue();
+    }
+
+    private void removeRole(Guild guild, Member member, Role role) {
+        if (this.config.disable.roleAdd) return;
+        guild.removeRoleFromMember(member, role).queue();
     }
 }

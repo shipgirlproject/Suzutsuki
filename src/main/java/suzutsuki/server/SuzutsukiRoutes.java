@@ -49,12 +49,14 @@ public class SuzutsukiRoutes {
     public void trigger(String endpoint, RoutingContext context) {
         HttpServerRequest request = context.request();
         HttpServerResponse response = context.response();
-        String auth = request.getHeader("authorization");
 
-        if (endpoint != "/avatars" && (auth == null || !auth.equals(this.config.tokens.getRest()))) {
-            response.setStatusMessage("Unauthorized");
-            context.fail(401);
-            return;
+        if (endpoint != "/avatars" && !this.config.disable.restAuth) {
+            String auth = request.getHeader("authorization");
+            if (auth == null || !auth.equals(this.config.tokens.getRest())) {
+                response.setStatusMessage("Unauthorized");
+                context.fail(401);
+                return;
+            }
         }
 
         Guild guild = this.client.getGuildById(this.config.guildId);
@@ -114,7 +116,7 @@ public class SuzutsukiRoutes {
 
             for (Patreon patreon : patreons.tiered) {
                 if (!tier.getPatreonTierId().equals(patreon.tierId)) continue;
-
+                
                 Member member = guild.getMemberById(patreon.userId);
 
                 JsonObject user = new JsonObject()

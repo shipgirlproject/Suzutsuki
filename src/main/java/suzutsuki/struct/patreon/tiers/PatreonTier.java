@@ -10,6 +10,11 @@ public class PatreonTier implements InterfacePatreonTier {
         this.globalRoleId = globalRoleId;
         this.config = config;
     }
+
+    @Override
+    public int getPatreonTierOrder() {
+        return this.config.order;
+    }
     
     @Override
     public String getTierName() {

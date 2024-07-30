@@ -1,11 +1,14 @@
 {
-  "debug": false,
   "port": 1024,
   "threads": 12,
   "tokens": {
     "bot": "",
     "rest": "",
     "patreon": ""
+  },
+  "disable": {
+    "roleAdd": false,
+    "restAuth": false
   },
   "prefix": "*",
   "guildId":  "423116740810244097",
@@ -15,10 +18,10 @@
   "patreonIgnoreRoleId": "1048231291113439313",
   "patreonGlobalRoleId": "546195459002204183",
   "patreonTiers": [
-    { "name": "Heroes", "discordRoleId": "465016501020393472", "patreonTierId": "2727995" },
-    { "name": "Specials", "discordRoleId": "447188525763526668", "patreonTierId": "2727980" },
-    { "name": "Benefactors", "discordRoleId": "435408701407363072", "patreonTierId": "2727976" },
-    { "name": "Contributors", "discordRoleId": "616920026087161877", "patreonTierId": "2727973" }
+    { "order": 1, "name": "Heroes", "discordRoleId": "465016501020393472", "patreonTierId": "2727995" },
+    { "order": 2, "name": "Specials", "discordRoleId": "447188525763526668", "patreonTierId": "2727980" },
+    { "order": 3, "name": "Benefactors", "discordRoleId": "435408701407363072", "patreonTierId": "2727976" },
+    { "order": 4, "name": "Contributors", "discordRoleId": "616920026087161877", "patreonTierId": "2727973" }
   ],
   "patreonCheckHonorsRole": false,
   "avatarUserIds": ["325231623262044162", "373409581973504000", "379928776857092097", "113390394884030464", "234752951887855616", "292273255346339840"]

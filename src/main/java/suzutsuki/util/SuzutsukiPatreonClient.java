@@ -3,6 +3,7 @@ package suzutsuki.util;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +39,7 @@ public class SuzutsukiPatreonClient {
         this.tiers = this.config.patreonTiers
             .stream()
             .map(tierConfig -> new PatreonTier(this.config.patreonGlobalRoleId, tierConfig))
+            .sorted(Comparator.comparing(PatreonTier::getPatreonTierOrder))
             .toList();
         this.patreons = new Patreons(this, new ArrayList<>(), new ArrayList<>());
 

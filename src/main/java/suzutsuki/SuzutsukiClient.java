@@ -16,7 +16,7 @@ import suzutsuki.util.Threads;
 public class SuzutsukiClient {
     public static void main(String[] args) throws Exception {
         System.setProperty("vertx.disableDnsResolver", "true");
-
+        
         SuzutsukiConfig config = SuzutsukiConfig.loadConfig();
 
         Logger logger = LoggerFactory.getLogger(SuzutsukiClient.class);

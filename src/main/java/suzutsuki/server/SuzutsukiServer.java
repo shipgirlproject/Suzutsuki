@@ -56,6 +56,6 @@ public class SuzutsukiServer {
 
     private void startServer() {
         server.requestHandler(this.router).listen(this.config.port);
-        this.logger.info("API routes set & running @ localhost:" + this.config.port);
+        this.logger.info("API routes set & running => http://localhost:" + this.config.port);
     }
 }
