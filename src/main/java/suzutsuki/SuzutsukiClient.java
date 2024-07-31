@@ -18,18 +18,13 @@ public class SuzutsukiClient {
         System.setProperty("vertx.disableDnsResolver", "true");
         
         SuzutsukiConfig config = SuzutsukiConfig.loadConfig();
-
         Logger logger = LoggerFactory.getLogger(SuzutsukiClient.class);
-
         Threads threads = new Threads(config, logger);
-
         Vertx vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(config.threads));
-
         SuzutsukiPatreonClient patreon = new SuzutsukiPatreonClient(vertx, logger, config, threads);
-
         JDA client = SuzutsukiDiscord.create(config, logger, threads);
-        
-        new SuzutsukiRoleManager(client, logger, threads, patreon, config);
-        new SuzutsukiServer(vertx, client, logger, patreon, config);
+        SuzutsukiRoleManager roles = new SuzutsukiRoleManager(client, logger, threads, patreon, config);
+
+        new SuzutsukiServer(vertx, client, logger, patreon, roles, config);
     }
 }

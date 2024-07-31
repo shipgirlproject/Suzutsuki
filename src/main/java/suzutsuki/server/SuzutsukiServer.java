@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 
 import suzutsuki.struct.config.SuzutsukiConfig;
 import suzutsuki.util.SuzutsukiPatreonClient;
+import suzutsuki.util.SuzutsukiRoleManager;
 
 public class SuzutsukiServer {
     private final SuzutsukiConfig config;
@@ -21,12 +22,12 @@ public class SuzutsukiServer {
     private final SuzutsukiRoutes routes;
     private final Logger logger;
 
-    public SuzutsukiServer(Vertx vertx, JDA client, Logger logger, SuzutsukiPatreonClient patreon, SuzutsukiConfig config) {
+    public SuzutsukiServer(Vertx vertx, JDA client, Logger logger, SuzutsukiPatreonClient patreon, SuzutsukiRoleManager roles, SuzutsukiConfig config) {
         this.config = config;
         this.logger = logger;
         this.server = vertx.createHttpServer();
         this.router = Router.router(vertx);
-        this.routes = new SuzutsukiRoutes(logger, client, config, patreon);
+        this.routes = new SuzutsukiRoutes(logger, client, config, patreon, roles);
         this.loadRoutes();
         this.startServer();
     }

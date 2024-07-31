@@ -31,7 +31,29 @@ public class SuzutsukiRoleManager {
         this.threads.scheduled.scheduleAtFixedRate(this::check, 0, 20, TimeUnit.SECONDS);
     }
 
-    public void check() {
+    public Patreon getRoleTier(String id) {
+        Guild guild = this.client.getGuildById(this.config.guildId);
+
+        if (guild == null) return null;
+
+        Member member = guild.getMemberById(id);
+
+        if (member == null) return null;
+
+        List<PatreonTier> tiers = this.patreon.getTiers();
+        List<Role> roles = member.getRoles();
+
+        PatreonTier tier = tiers.stream()
+            .filter(t -> roles.stream().anyMatch(role -> role.getId().equals(t.getDiscordRoleId())))
+            .findFirst()
+            .orElse(null);
+
+        if (tier == null) return null;
+
+        return new Patreon(id, tier.getTierName(), tier.getPatreonTierId());
+    }
+
+    private void check() {
         Patreons patreon = this.patreon.getPatreons();
         List<PatreonTier> tiers = this.patreon.getTiers();
 

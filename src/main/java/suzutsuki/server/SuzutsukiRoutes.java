@@ -14,8 +14,10 @@ import suzutsuki.struct.patreon.Patreon;
 import suzutsuki.struct.patreon.Patreons;
 import suzutsuki.struct.patreon.tiers.PatreonTier;
 import suzutsuki.util.SuzutsukiPatreonClient;
+import suzutsuki.util.SuzutsukiRoleManager;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 
@@ -24,12 +26,14 @@ public class SuzutsukiRoutes {
     private final JDA client;
     private final SuzutsukiConfig config;
     private final SuzutsukiPatreonClient patreon;
+    private final SuzutsukiRoleManager roles;
 
-    public SuzutsukiRoutes(Logger logger, JDA client, SuzutsukiConfig config, SuzutsukiPatreonClient patreon) {
+    public SuzutsukiRoutes(Logger logger, JDA client, SuzutsukiConfig config, SuzutsukiPatreonClient patreon, SuzutsukiRoleManager roles) {
         this.logger = logger;
         this.client = client;
         this.config = config;
         this.patreon = patreon;
+        this.roles = roles;
     }
 
     public void triggerFail(RoutingContext context) {
@@ -90,16 +94,19 @@ public class SuzutsukiRoutes {
 
         Patreons patreons = this.patreon.getPatreons();
 
-        Patreon result = patreons.tiered
+        Optional<Patreon> optional = patreons.tiered
             .stream()
             .filter(patreon -> userId.equals(patreon.userId))
-            .findFirst()
-            .orElse(null);
+            .findFirst();
         
-        if (result == null) {
+        Patreon patreon = (this.config.patreonCheckHonorsRole) ? 
+            optional.orElseGet(() -> this.roles.getRoleTier(userId)) : 
+            optional.orElse(null);
+        
+        if (patreon == null) {
             json.putNull("status");
         } else {
-            json.put("status", result.tierName);
+            json.put("status", patreon.tierName);
         }
 
         response.end(json.toString());
