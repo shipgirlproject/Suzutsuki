@@ -28,10 +28,10 @@ public class SuzutsukiRoleManager {
         this.client = client;
         this.threads = threads;
 
-        this.threads.scheduled.scheduleAtFixedRate(this::handlePatreonRoles, 0, 20, TimeUnit.SECONDS);
+        this.threads.scheduled.scheduleAtFixedRate(this::check, 0, 20, TimeUnit.SECONDS);
     }
 
-    private void handlePatreonRoles() {
+    public void check() {
         Patreons patreon = this.patreon.getPatreons();
         List<PatreonTier> tiers = this.patreon.getTiers();
 
@@ -42,8 +42,8 @@ public class SuzutsukiRoleManager {
             return;
         }
 
-        this.threads.normal.execute(() -> HandleThread.error(() -> this.addPatreonsRole(guild, patreon.tiered, tiers), this.logger));
-        this.threads.normal.execute(() -> HandleThread.error(() -> this.removePatreonsRole(guild, patreon.tiered, tiers), this.logger));
+        this.threads.normal.execute(() -> this.addPatreonsRole(guild, patreon.tiered, tiers));
+        this.threads.normal.execute(() ->  this.removePatreonsRole(guild, patreon.tiered, tiers));
     }
 
     private void addPatreonsRole(Guild guild, List<Patreon> patreons, List<PatreonTier> tiers) {
@@ -144,7 +144,7 @@ public class SuzutsukiRoleManager {
             
             this.removeRole(guild, member, role);
 
-            this.logger.info("Removed patreon! Removed Role: (" + role.getName() +") | Global Role Removed: " + didRemoveGlobal + " | User: @" + member.getEffectiveName() + "(" + member.getUser().getId() + ")");
+            this.logger.info("Removed patreon! Removed Role: (" + role.getName() + ") | Global Role Removed: " + didRemoveGlobal + " | User: @" + member.getEffectiveName() + "(" + member.getUser().getId() + ")");
         }
     }
 

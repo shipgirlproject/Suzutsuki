@@ -5,10 +5,9 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
@@ -23,7 +22,7 @@ import suzutsuki.struct.patreon.User;
 import suzutsuki.struct.patreon.relationships.Relationship;
 import suzutsuki.struct.patreon.tiers.PatreonTier;
 
-public class SuzutsukiPatreonClient {
+public class SuzutsukiPatreonClient { 
     private final Logger logger;
     private final SuzutsukiConfig config;
     private final String url;
@@ -43,7 +42,7 @@ public class SuzutsukiPatreonClient {
             .toList();
         this.patreons = new Patreons(this, new ArrayList<>(), new ArrayList<>());
 
-        threads.scheduled.scheduleAtFixedRate(() -> HandleThread.error(this::fetch, this.logger), 0, 30, TimeUnit.SECONDS);
+        threads.scheduled.scheduleAtFixedRate(this::fetch, 0, 30, TimeUnit.SECONDS);
 
         this.logger.info("Patreon now scheduled to run!");
     }
@@ -102,21 +101,16 @@ public class SuzutsukiPatreonClient {
     }
 
     private JsonObject get(String url) {
-        CompletableFuture<HttpResponse<Buffer>> future  = new CompletableFuture<>();
-        this.client.requestAbs(HttpMethod.GET, url)
+        Future<HttpResponse<Buffer>> future = this.client.requestAbs(HttpMethod.GET, url)
             .putHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
             .putHeader("Authorization", "Bearer " + this.config.tokens.getPatreon())
-            .send(response -> this.handleResult(future, response));
-        HttpResponse<Buffer> response = future.join();
-        return response.bodyAsJsonObject();
-    }
+            .send();
 
-    private void handleResult(CompletableFuture<HttpResponse<Buffer>> completableFuture, AsyncResult<HttpResponse<Buffer>> asyncResult) {
-        if (asyncResult.failed()) {
-            completableFuture.completeExceptionally(asyncResult.cause());
-            return;
+        if (future.failed()) {
+            throw new RuntimeException(future.cause().getMessage(), future.cause());
         }
-        completableFuture.complete(asyncResult.result());
+
+        return future.result().bodyAsJsonObject();
     }
 }
  

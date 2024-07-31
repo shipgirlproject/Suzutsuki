@@ -21,7 +21,7 @@ public class SuzutsukiClient {
 
         Logger logger = LoggerFactory.getLogger(SuzutsukiClient.class);
 
-        Threads threads = new Threads(config);
+        Threads threads = new Threads(config, logger);
 
         Vertx vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(config.threads));
 

@@ -4,13 +4,13 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import suzutsuki.struct.config.SuzutsukiConfig;
-import suzutsuki.util.HandleThread;
 import suzutsuki.util.Threads;
 
 import org.slf4j.Logger;
 
 public class MessageReceived extends ListenerAdapter {
     private final SuzutsukiConfig config;
+    @SuppressWarnings("unused")
     private final Logger logger;
     private final JDA client;
     private final Threads threads;
@@ -24,7 +24,7 @@ public class MessageReceived extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        this.threads.virtual.execute(() -> HandleThread.error(() -> this.handleMessage(event), this.logger));
+        this.threads.virtual.execute(() -> this.handleMessage(event));
     }
 
     public void handleMessage(MessageReceivedEvent event) {
