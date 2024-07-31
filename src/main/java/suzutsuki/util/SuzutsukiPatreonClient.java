@@ -5,9 +5,10 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import io.vertx.core.Future;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
@@ -42,9 +43,11 @@ public class SuzutsukiPatreonClient {
             .toList();
         this.patreons = new Patreons(this, new ArrayList<>(), new ArrayList<>());
 
+        this.fetch();
+
         threads.scheduled.scheduleAtFixedRate(this::fetch, 0, 30, TimeUnit.SECONDS);
 
-        this.logger.info("Patreon now scheduled to run!");
+        this.logger.info("Patreon is now loaded and scheduled to run!");
     }
 
     public List<PatreonTier> getTiers() {
@@ -101,16 +104,23 @@ public class SuzutsukiPatreonClient {
     }
 
     private JsonObject get(String url) {
-        Future<HttpResponse<Buffer>> future = this.client.requestAbs(HttpMethod.GET, url)
+        CompletableFuture<AsyncResult<HttpResponse<Buffer>>> future = new CompletableFuture<AsyncResult<HttpResponse<Buffer>>>();
+
+        this.client.requestAbs(HttpMethod.GET, url)
             .putHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
             .putHeader("Authorization", "Bearer " + this.config.tokens.getPatreon())
-            .send();
+            .send((AsyncResult<HttpResponse<Buffer>> buffer) -> future.complete(buffer));
+        
+        AsyncResult<HttpResponse<Buffer>> async = future.join();
 
-        if (future.failed()) {
-            throw new RuntimeException(future.cause().getMessage(), future.cause());
+        if (async.failed()) {
+            Throwable cause = async.cause();
+            throw new RuntimeException(cause.getMessage(), cause);
         }
 
-        return future.result().bodyAsJsonObject();
+        HttpResponse<Buffer> response = async.result();
+
+        return response.bodyAsJsonObject();
     }
 }
  

@@ -34,7 +34,6 @@ public class SuzutsukiConfig {
     public static SuzutsukiConfig loadConfig() throws URISyntaxException, IOException {
         File file = new File(SuzutsukiClient.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         String directory = file.getPath().replace(file.getName(), "config.json");
-        System.out.println(directory);
         try (InputStream stream = new FileInputStream(directory)) {
             byte[] bytes = stream.readAllBytes();
             JsonObject config = new JsonObject(new String(bytes, StandardCharsets.UTF_8));
