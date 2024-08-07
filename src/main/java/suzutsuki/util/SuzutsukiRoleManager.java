@@ -31,7 +31,7 @@ public class SuzutsukiRoleManager {
         this.threads.scheduled.scheduleAtFixedRate(this::check, 0, 20, TimeUnit.SECONDS);
     }
 
-    public Patreon getRoleTier(String id) {
+    public Patreon getRolePatreon(String id) {
         Guild guild = this.client.getGuildById(this.config.guildId);
 
         if (guild == null) return null;
@@ -60,7 +60,7 @@ public class SuzutsukiRoleManager {
         Guild guild = this.client.getGuildById(this.config.guildId);
 
         if (guild == null) {
-            this.logger.debug("Guild (" + this.config.guildId + ") not found. Can\'t execute patreon checks");
+            this.logger.debug("Guild (" + this.config.guildId + ") not found. Can't execute patreon checks");
             return;
         }
 
@@ -86,7 +86,7 @@ public class SuzutsukiRoleManager {
             }
 
             // check and add global patreon role
-            Boolean didAddGlobal = false;
+            boolean didAddGlobal = false;
             if (this.config.patreonGlobalRoleId != null && roles.stream().noneMatch(role -> role.getId().equals(this.config.patreonGlobalRoleId))) {
                 Role role = guild.getRoles()
                     .stream()
@@ -142,7 +142,7 @@ public class SuzutsukiRoleManager {
             }
 
             // check and remove global patreon role
-            Boolean didRemoveGlobal = false;
+            boolean didRemoveGlobal = false;
             if (this.config.patreonGlobalRoleId != null && roles.stream().anyMatch(r -> r.getId().equals(this.config.patreonGlobalRoleId))) {
                 Role role = guild.getRoles()
                     .stream()

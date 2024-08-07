@@ -1,2 +1,12 @@
-package suzutsuki.struct.rest;public class PatreonTierResponse {
+package suzutsuki.struct.rest;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@JsonAutoDetect
+public class PatreonsTierUserResponse {
+    public String tierName;
+    public List<PatreonTierUserResponse> users = new ArrayList<>();
 }

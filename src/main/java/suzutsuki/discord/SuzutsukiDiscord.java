@@ -7,15 +7,17 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
+import suzutsuki.database.SuzutsukiStore;
 import suzutsuki.discord.events.MessageReceived;
 import suzutsuki.discord.events.Ready;
 import suzutsuki.struct.config.SuzutsukiConfig;
+import suzutsuki.util.SuzutsukiPatreonClient;
 import suzutsuki.util.Threads;
 
 import javax.security.auth.login.LoginException;
 
 public class SuzutsukiDiscord {
-    public static JDA create(SuzutsukiConfig config, Logger logger, Threads threads) throws LoginException, InterruptedException {
+    public static JDA create(SuzutsukiConfig config, Logger logger, SuzutsukiStore store, SuzutsukiPatreonClient patreon, Threads threads) throws LoginException, InterruptedException {
         JDA client = JDABuilder.createDefault(config.tokens.getBot())
             .setMemberCachePolicy(MemberCachePolicy.ALL)
             .enableIntents(
@@ -41,7 +43,7 @@ public class SuzutsukiDiscord {
 
         client.addEventListener(
             new Ready(client, logger, threads),
-            new MessageReceived(client, logger, threads, config)
+            new MessageReceived(client, logger, threads, store, patreon, config)
         );
 
         logger.info("Event Listeners are loaded!");

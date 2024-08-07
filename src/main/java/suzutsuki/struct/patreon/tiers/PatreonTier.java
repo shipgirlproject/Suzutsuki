@@ -15,6 +15,11 @@ public class PatreonTier implements InterfacePatreonTier {
     public int getPatreonTierOrder() {
         return this.config.order;
     }
+
+    @Override
+    public int getPatreonTierLimit() {
+        return this.config.limit;
+    }
     
     @Override
     public String getTierName() {

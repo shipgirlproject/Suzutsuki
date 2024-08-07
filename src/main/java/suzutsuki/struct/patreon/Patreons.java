@@ -3,25 +3,38 @@ package suzutsuki.struct.patreon;
 import java.util.ArrayList;
 import java.util.List;
 
+import suzutsuki.struct.config.MockPatreon;
+import suzutsuki.struct.config.SuzutsukiConfig;
 import suzutsuki.struct.patreon.relationships.Relationship;
 import suzutsuki.struct.patreon.relationships.shared.Data;
 import suzutsuki.struct.patreon.tiers.PatreonTier;
 import suzutsuki.util.SuzutsukiPatreonClient;
 
 public class Patreons {
-    private final SuzutsukiPatreonClient patreon;
     public final List<Relationship> relationships;
     public final List<User> users;
     public final List<Patreon> tiered;
 
-    public Patreons(SuzutsukiPatreonClient patreon, List<Relationship> relationships, List<User> users) {
-        this.patreon = patreon;
+    public Patreons(SuzutsukiPatreonClient patreon, List<Relationship> relationships, List<User> users, SuzutsukiConfig config) {
         this.relationships = relationships;
         this.users = users
             .stream()
             .filter(User::hasDiscordUserId)
             .toList();
         this.tiered = new ArrayList<>();
+
+        if (!config.mockPatreons.isEmpty()) {
+            for (MockPatreon user : config.mockPatreons) {
+                PatreonTier tier = patreon.getTiers().stream()
+                        .filter(t -> t.getPatreonTierId().equals(user.patreonTierId))
+                        .findFirst()
+                        .orElse(null);
+                if (tier == null)
+                    throw new RuntimeException("Invalid tier id provided for mock patreon. Please ensure the tier id exists in patreon tier");
+
+                this.tiered.add(new Patreon(user.userId, tier.getTierName(), tier.getPatreonTierId()));
+            }
+        }
 
         for (User user : this.users) {
             Relationship relationship = this.relationships
@@ -35,11 +48,11 @@ public class Patreons {
 
             List<Data> subscription = relationship.relationships.currentlyEntitledTiers.data;                
 
-            if (subscription.size() == 0) continue;
+            if (subscription.isEmpty()) continue;
 
             String userId = user.attributes.socialConnections.discord.userId;
 
-            for (PatreonTier tier : this.patreon.getTiers()) {
+            for (PatreonTier tier : patreon.getTiers()) {
                 if (subscription.stream().noneMatch(data -> tier.getPatreonTierId().equals(data.id))) continue;
 
                 Patreon person = new Patreon(userId, tier.getTierName(), tier.getPatreonTierId());

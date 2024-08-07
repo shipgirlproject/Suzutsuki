@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     testImplementation("junit:junit:4.12")
+    implementation("com.h2database:h2:2.3.230")
     implementation("net.dv8tion:JDA:5.0.1")
     implementation("io.vertx:vertx-core:4.5.9")
     implementation("io.vertx:vertx-web:4.5.9")

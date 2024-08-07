@@ -28,6 +28,7 @@ hs_err_pid*
 # Ignore other files
 .gradle
 .vscode
+.idea
 bin
 config.json
 
