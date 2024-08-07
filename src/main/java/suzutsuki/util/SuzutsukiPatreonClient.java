@@ -1,8 +1,5 @@
 package suzutsuki.util;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
 import org.slf4j.Logger;
 
 import java.sql.SQLException;
@@ -115,7 +112,9 @@ public class SuzutsukiPatreonClient {
             }
         }
 
-        this.logger.info("Unscheduled " + count + " entries for deletion");
+        if (count > 0) {
+            this.logger.info("Unscheduled " + count + " entries for deletion");
+        }
     }
 
     private void schedule() {
@@ -142,7 +141,9 @@ public class SuzutsukiPatreonClient {
             }
         }
 
-        this.logger.info("Scheduled " + oldEntries.size() + " entries for deletion in " + this.config.storeCleanDelayTimeMinutes + " minute(s)");
+        if (!oldEntries.isEmpty()) {
+            this.logger.info("Scheduled " + oldEntries.size() + " entries for deletion in " + this.config.storeCleanDelayTimeMinutes + " minute(s)");
+        }
 
         this.unschedule();
         this.purge();
@@ -151,7 +152,9 @@ public class SuzutsukiPatreonClient {
     private void purge() {
         try {
             int cleaned = this.store.purge();
-            this.logger.info("Cleaned " + cleaned + " expired entries from the database");
+            if (cleaned > 0) {
+                this.logger.info("Cleaned " + cleaned + " expired entries from the database");
+            }
         } catch (SQLException exception) {
             this.logger.error(exception.getMessage(), exception);
         }
@@ -197,13 +200,13 @@ public class SuzutsukiPatreonClient {
             })
             .toList();
 
-        this.threads.normal.execute(this::schedule);
-
         this.patreons = new Patreons(this, relationships, users, this.config);
+
+        this.threads.normal.execute(this::schedule);
     }
 
     private JsonObject get(String url) {
-        CompletableFuture<AsyncResult<HttpResponse<Buffer>>> future = new CompletableFuture<AsyncResult<HttpResponse<Buffer>>>();
+        CompletableFuture<AsyncResult<HttpResponse<Buffer>>> future = new CompletableFuture<>();
 
         this.client.requestAbs(HttpMethod.GET, url)
             .putHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
