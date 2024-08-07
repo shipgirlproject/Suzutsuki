@@ -9,8 +9,8 @@ import suzutsuki.database.SuzutsukiStore;
 import suzutsuki.discord.SuzutsukiDiscord;
 import suzutsuki.server.SuzutsukiServer;
 import suzutsuki.struct.config.SuzutsukiConfig;
-import suzutsuki.util.SuzutsukiPatreonClient;
-import suzutsuki.util.SuzutsukiRoleManager;
+import suzutsuki.util.PatreonClient;
+import suzutsuki.util.RoleManager;
 import suzutsuki.util.Threads;
 
 import java.io.File;
@@ -27,9 +27,9 @@ public class SuzutsukiClient {
 		Threads threads = new Threads(config, logger);
 		Vertx vertx = Vertx.vertx(new VertxOptions());
 		SuzutsukiStore store = new SuzutsukiStore(logger, directory);
-		SuzutsukiPatreonClient patreon = new SuzutsukiPatreonClient(vertx, logger, store, config, threads);
+		PatreonClient patreon = new PatreonClient(vertx, logger, store, config, threads);
 		JDA client = SuzutsukiDiscord.create(config, logger, store, patreon, threads);
-		SuzutsukiRoleManager roles = new SuzutsukiRoleManager(client, logger, threads, patreon, config);
+		RoleManager roles = new RoleManager(client, logger, threads, patreon, config);
 
 		new SuzutsukiServer(vertx, client, logger, patreon, store, roles, config);
 	}

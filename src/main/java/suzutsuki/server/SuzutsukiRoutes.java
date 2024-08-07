@@ -16,8 +16,8 @@ import suzutsuki.struct.patreon.Patreon;
 import suzutsuki.struct.patreon.Patreons;
 import suzutsuki.struct.patreon.tiers.PatreonTier;
 import suzutsuki.struct.rest.*;
-import suzutsuki.util.SuzutsukiPatreonClient;
-import suzutsuki.util.SuzutsukiRoleManager;
+import suzutsuki.util.PatreonClient;
+import suzutsuki.util.RoleManager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,11 +29,11 @@ public class SuzutsukiRoutes {
 	private final Logger logger;
 	private final JDA client;
 	private final SuzutsukiConfig config;
-	private final SuzutsukiPatreonClient patreon;
+	private final PatreonClient patreon;
 	private final SuzutsukiStore store;
-	private final SuzutsukiRoleManager roles;
+	private final RoleManager roles;
 
-	public SuzutsukiRoutes(Logger logger, JDA client, SuzutsukiConfig config, SuzutsukiPatreonClient patreon, SuzutsukiStore store, SuzutsukiRoleManager roles) {
+	public SuzutsukiRoutes(Logger logger, JDA client, SuzutsukiConfig config, PatreonClient patreon, SuzutsukiStore store, RoleManager roles) {
 		this.logger = logger;
 		this.client = client;
 		this.config = config;

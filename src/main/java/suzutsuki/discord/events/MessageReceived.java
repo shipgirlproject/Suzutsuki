@@ -15,7 +15,7 @@ import suzutsuki.struct.patreon.Patreon;
 import suzutsuki.struct.patreon.tiers.PatreonTier;
 import suzutsuki.struct.store.SuzutsukiStoreEntry;
 import suzutsuki.util.Memory;
-import suzutsuki.util.SuzutsukiPatreonClient;
+import suzutsuki.util.PatreonClient;
 import suzutsuki.util.Threads;
 
 import java.sql.SQLException;
@@ -28,10 +28,10 @@ public class MessageReceived extends ListenerAdapter {
 	private final Logger logger;
 	private final JDA client;
 	private final Threads threads;
-	private final SuzutsukiPatreonClient patreon;
+	private final PatreonClient patreon;
 	private final SuzutsukiStore store;
 
-	public MessageReceived(JDA client, Logger logger, Threads threads, SuzutsukiStore store, SuzutsukiPatreonClient patreon, SuzutsukiConfig config) {
+	public MessageReceived(JDA client, Logger logger, Threads threads, SuzutsukiStore store, PatreonClient patreon, SuzutsukiConfig config) {
 		this.config = config;
 		this.logger = logger;
 		this.client = client;

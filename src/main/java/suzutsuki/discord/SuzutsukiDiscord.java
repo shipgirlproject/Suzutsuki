@@ -11,11 +11,11 @@ import suzutsuki.database.SuzutsukiStore;
 import suzutsuki.discord.events.MessageReceived;
 import suzutsuki.discord.events.Ready;
 import suzutsuki.struct.config.SuzutsukiConfig;
-import suzutsuki.util.SuzutsukiPatreonClient;
+import suzutsuki.util.PatreonClient;
 import suzutsuki.util.Threads;
 
 public class SuzutsukiDiscord {
-	public static JDA create(SuzutsukiConfig config, Logger logger, SuzutsukiStore store, SuzutsukiPatreonClient patreon, Threads threads) throws InterruptedException {
+	public static JDA create(SuzutsukiConfig config, Logger logger, SuzutsukiStore store, PatreonClient patreon, Threads threads) throws InterruptedException {
 		JDA client = JDABuilder.createDefault(config.tokens.getBot())
 			.setMemberCachePolicy(MemberCachePolicy.ALL)
 			.enableIntents(

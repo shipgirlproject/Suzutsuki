@@ -5,7 +5,7 @@ import suzutsuki.struct.config.SuzutsukiConfig;
 import suzutsuki.struct.patreon.relationships.Relationship;
 import suzutsuki.struct.patreon.relationships.shared.Data;
 import suzutsuki.struct.patreon.tiers.PatreonTier;
-import suzutsuki.util.SuzutsukiPatreonClient;
+import suzutsuki.util.PatreonClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ public class Patreons {
 	public final List<User> users;
 	public final List<Patreon> tiered;
 
-	public Patreons(SuzutsukiPatreonClient patreon, List<Relationship> relationships, List<User> users, SuzutsukiConfig config) {
+	public Patreons(PatreonClient patreon, List<Relationship> relationships, List<User> users, SuzutsukiConfig config) {
 		this.relationships = relationships;
 		this.users = users
 			.stream()

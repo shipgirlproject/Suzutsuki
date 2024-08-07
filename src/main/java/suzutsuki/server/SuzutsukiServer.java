@@ -10,8 +10,8 @@ import net.dv8tion.jda.api.JDA;
 import org.slf4j.Logger;
 import suzutsuki.database.SuzutsukiStore;
 import suzutsuki.struct.config.SuzutsukiConfig;
-import suzutsuki.util.SuzutsukiPatreonClient;
-import suzutsuki.util.SuzutsukiRoleManager;
+import suzutsuki.util.PatreonClient;
+import suzutsuki.util.RoleManager;
 
 public class SuzutsukiServer {
 	private final SuzutsukiConfig config;
@@ -20,7 +20,7 @@ public class SuzutsukiServer {
 	private final SuzutsukiRoutes routes;
 	private final Logger logger;
 
-	public SuzutsukiServer(Vertx vertx, JDA client, Logger logger, SuzutsukiPatreonClient patreon, SuzutsukiStore store, SuzutsukiRoleManager roles, SuzutsukiConfig config) {
+	public SuzutsukiServer(Vertx vertx, JDA client, Logger logger, PatreonClient patreon, SuzutsukiStore store, RoleManager roles, SuzutsukiConfig config) {
 		this.config = config;
 		this.logger = logger;
 		this.server = vertx.createHttpServer();

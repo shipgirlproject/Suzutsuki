@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class SuzutsukiPatreonClient {
+public class PatreonClient {
 	private final Logger logger;
 	private final SuzutsukiConfig config;
 	private final SuzutsukiStore store;
@@ -36,7 +36,7 @@ public class SuzutsukiPatreonClient {
 	private final List<PatreonTier> tiers;
 	private volatile Patreons patreons;
 
-	public SuzutsukiPatreonClient(Vertx vertx, Logger logger, SuzutsukiStore store, SuzutsukiConfig config, Threads threads) {
+	public PatreonClient(Vertx vertx, Logger logger, SuzutsukiStore store, SuzutsukiConfig config, Threads threads) {
 		this.logger = logger;
 		this.config = config;
 		this.store = store;

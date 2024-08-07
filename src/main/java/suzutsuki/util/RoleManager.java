@@ -13,15 +13,15 @@ import suzutsuki.struct.patreon.tiers.PatreonTier;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class SuzutsukiRoleManager {
+public class RoleManager {
 	private final SuzutsukiConfig config;
 	private final Logger logger;
-	private final SuzutsukiPatreonClient patreon;
+	private final PatreonClient patreon;
 	private final JDA client;
 	private final Threads threads;
 	private boolean log;
 
-	public SuzutsukiRoleManager(JDA client, Logger logger, Threads threads, SuzutsukiPatreonClient patreon, SuzutsukiConfig config) {
+	public RoleManager(JDA client, Logger logger, Threads threads, PatreonClient patreon, SuzutsukiConfig config) {
 		this.config = config;
 		this.logger = logger;
 		this.patreon = patreon;
