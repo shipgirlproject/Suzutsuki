@@ -20,6 +20,7 @@ public class SuzutsukiRoleManager {
     private final SuzutsukiPatreonClient patreon;
     private final JDA client;
     private final Threads threads;
+    private boolean log;
 
     public SuzutsukiRoleManager(JDA client, Logger logger, Threads threads, SuzutsukiPatreonClient patreon, SuzutsukiConfig config) {
         this.config = config;
@@ -27,6 +28,7 @@ public class SuzutsukiRoleManager {
         this.patreon = patreon;
         this.client = client;
         this.threads = threads;
+        this.log = true;
 
         this.threads.scheduled.scheduleAtFixedRate(this::check, 0, 20, TimeUnit.SECONDS);
     }
@@ -73,7 +75,7 @@ public class SuzutsukiRoleManager {
             Member member = guild.getMemberById(patreon.userId);
 
             if (member == null) {
-                this.logger.debug("User (" + patreon.userId + ") => Not found as member can\'t add Patreon Roles");
+                this.logger.debug("User (" + patreon.userId + ") => Not found as member can't add Patreon Roles");
                 continue;
             }
 
@@ -118,9 +120,13 @@ public class SuzutsukiRoleManager {
                 if (role == null) continue;
 
                 this.addRole(guild, member, role);
-                
-                this.logger.info("New patreon! Added Role: (" + role.getName() +") | Global Role Added: " + didAddGlobal  + " | User: @" + member.getEffectiveName() + "(" + member.getUser().getId() + ")");
+
+                if (!this.log) continue;
+                this.logger.info("New patreon! Added Role: (" + role.getName() + ") | Global Role Added: " + didAddGlobal + " | User: @" + member.getEffectiveName() + "(" + member.getUser().getId() + ")");
             }
+
+            if (!this.config.disable.roleAdd) return;
+            this.log = false;
         }
     }
 
@@ -166,8 +172,12 @@ public class SuzutsukiRoleManager {
             
             this.removeRole(guild, member, role);
 
+            if (!this.log) continue;
             this.logger.info("Removed patreon! Removed Role: (" + role.getName() + ") | Global Role Removed: " + didRemoveGlobal + " | User: @" + member.getEffectiveName() + "(" + member.getUser().getId() + ")");
         }
+
+        if (!this.config.disable.roleAdd) return;
+        this.log = false;
     }
 
     private void addRole(Guild guild, Member member, Role role) {
