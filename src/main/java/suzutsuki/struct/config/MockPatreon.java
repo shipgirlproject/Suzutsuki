@@ -1,6 +1,6 @@
 package suzutsuki.struct.config;
 
 public class MockPatreon {
-    public String userId;
-    public String patreonTierId;
+	public String userId;
+	public String patreonTierId;
 }

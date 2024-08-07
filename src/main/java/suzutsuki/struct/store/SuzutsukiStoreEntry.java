@@ -6,6 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonAutoDetect
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SuzutsukiStoreEntry {
-    public String guildId;
-    public String userId;
+	public String guildId;
+	public String userId;
 }

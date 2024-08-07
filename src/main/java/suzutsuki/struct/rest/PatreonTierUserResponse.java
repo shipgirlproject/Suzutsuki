@@ -4,6 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonAutoDetect
 public class PatreonTierUserResponse {
-    public String userId;
-    public String username;
+	public String userId;
+	public String username;
 }

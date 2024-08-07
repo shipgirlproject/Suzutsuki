@@ -7,6 +7,6 @@ import java.util.List;
 
 @JsonAutoDetect
 public class PatreonGuildResponse {
-    public String guildId;
-    public List<PatreonUserResponse> users = new ArrayList<>();
+	public String guildId;
+	public final List<PatreonUserResponse> users = new ArrayList<>();
 }

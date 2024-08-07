@@ -4,6 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonAutoDetect
 public class AvatarUrlResponse {
-    public String userId;
-    public String avatarUrl;
+	public String userId;
+	public String avatarUrl;
 }

@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonAutoDetect
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Data {
-    @JsonProperty("user_id")
-    public String userId;
-    public String url;
+	@JsonProperty("user_id")
+	public String userId;
+	public String url;
 }
 

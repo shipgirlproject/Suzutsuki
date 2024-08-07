@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonAutoDetect
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Relationships {
-    @JsonProperty("currently_entitled_tiers")
-    public CurrentlyEntitledTiers currentlyEntitledTiers;
-    public User user;
+	@JsonProperty("currently_entitled_tiers")
+	public CurrentlyEntitledTiers currentlyEntitledTiers;
+	public User user;
 }

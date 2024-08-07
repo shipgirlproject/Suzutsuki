@@ -6,5 +6,5 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonAutoDetect
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Links {
-    public String related;
+	public String related;
 }
