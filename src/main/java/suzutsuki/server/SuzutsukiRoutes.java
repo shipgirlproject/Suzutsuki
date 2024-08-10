@@ -101,11 +101,11 @@ public class SuzutsukiRoutes {
 	private void checkGuildPatreonStatus(HttpServerRequest request, HttpServerResponse response) {
 		String guildId = request.getParam("id");
 
-		PatreonGuildResponse guildResponse = new PatreonGuildResponse();
-		guildResponse.guildId = guildId;
+		PatreonGuildResponse guild = new PatreonGuildResponse();
+		guild.guildId = guildId;
 
 		if (guildId == null || guildId.isEmpty()) {
-			response.end(JsonObject.mapFrom(guildResponse).toString());
+			response.end(JsonObject.mapFrom(guild).toString());
 			return;
 		}
 
@@ -123,7 +123,7 @@ public class SuzutsukiRoutes {
 		}
 
 		if (entries.isEmpty()) {
-			response.end(JsonObject.mapFrom(guildResponse).toString());
+			response.end(JsonObject.mapFrom(guild).toString());
 			return;
 		}
 
@@ -132,21 +132,23 @@ public class SuzutsukiRoutes {
 			if (tier == null) continue;
 			PatreonUserResponse user = new PatreonUserResponse();
 			user.userId = entry.userId;
-			user.tier = tier.getTierName();
-			guildResponse.users.add(user);
+			user.tierName = tier.getTierName();
+			user.tierId = tier.getPatreonTierId();
+			user.tierOrder = tier.getPatreonTierOrder();
+			guild.users.add(user);
 		}
 
-		response.end(JsonObject.mapFrom(guildResponse).toString());
+		response.end(JsonObject.mapFrom(guild).toString());
 	}
 
 	private void checkUserPatreonStatus(HttpServerRequest request, HttpServerResponse response) {
 		String userId = request.getParam("id");
 
-		PatreonUserResponse userResponse = new PatreonUserResponse();
-		userResponse.userId = userId;
+		PatreonUserResponse user = new PatreonUserResponse();
+		user.userId = userId;
 
 		if (userId == null || userId.isEmpty()) {
-			response.end(JsonObject.mapFrom(userResponse).toString());
+			response.end(JsonObject.mapFrom(user).toString());
 			return;
 		}
 
@@ -161,13 +163,15 @@ public class SuzutsukiRoutes {
 			opt.orElseGet(() -> this.roles.getRolePatreon(userId)) :
 			opt.orElse(null);
 
-		if (patreon == null) {
-			userResponse.tier = null;
-		} else {
-			userResponse.tier = patreon.tierName;
+		if (patreon != null) {
+			PatreonTier tier = this.patreon.getTier(user.userId);
+			if (tier == null) throw new RuntimeException("Tier should not be null here");
+			user.tierName = tier.getTierName();
+			user.tierId = tier.getPatreonTierId();
+			user.tierOrder = tier.getPatreonTierOrder();
 		}
 
-		response.end(JsonObject.mapFrom(userResponse).toString());
+		response.end(JsonObject.mapFrom(user).toString());
 	}
 
 	private void currentPatreons(Guild guild, HttpServerResponse response) {
