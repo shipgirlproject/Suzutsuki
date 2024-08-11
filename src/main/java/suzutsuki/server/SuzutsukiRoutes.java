@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SuzutsukiRoutes {
 	private final Logger logger;
@@ -81,11 +82,15 @@ public class SuzutsukiRoutes {
 				case "/patreons/check/guild":
 					this.checkGuildPatreonStatus(request, response);
 					break;
+				case "/patreons/tier":
+					this.checkTierInfo(request, response);
+					break;
 				case "/patreons":
 					this.currentPatreons(guild, response);
 					break;
 				case "/avatars":
 					this.getAvatars(response);
+					break;
 				default:
 					throw new RuntimeException("No such route saved for: " + endpoint);
 			}
@@ -172,6 +177,34 @@ public class SuzutsukiRoutes {
 		}
 
 		response.end(JsonObject.mapFrom(user).toString());
+	}
+
+	private void checkTierInfo(HttpServerRequest request, HttpServerResponse response) {
+		String tierId = request.getParam("id");
+
+		PatreonTierResponse tier = new PatreonTierResponse();
+
+		if (tierId == null || tierId.isEmpty()) {
+			response.end(JsonObject.mapFrom(tier).toString());
+			return;
+		}
+
+		PatreonTier data = this.patreon.getTiers()
+			.stream()
+			.filter(t -> t.getPatreonTierId().equals(tierId))
+			.findFirst()
+			.orElse(null);
+
+		if (data == null) {
+			response.end(JsonObject.mapFrom(tier).toString());
+			return;
+		}
+
+		tier.tierId = data.getPatreonTierId();
+		tier.tierName = data.getTierName();
+		tier.tierOrder = data.getPatreonTierOrder();
+
+		response.end(JsonObject.mapFrom(tier).toString());
 	}
 
 	private void currentPatreons(Guild guild, HttpServerResponse response) {
