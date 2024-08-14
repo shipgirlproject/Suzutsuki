@@ -124,7 +124,8 @@ public class RoleManager {
 				this.logger.info("New patreon! Added Role: ({}) | Global Role Added: {} | User: @{}({})", role.getName(), didAddGlobal, member.getEffectiveName(), member.getUser().getId());
 			}
 
-			if (!this.config.disable.roleAdd) return;
+			if (this.config.disableFeatures.stream().noneMatch(s -> s.equals("Role"))) return;
+
 			this.log = false;
 		}
 	}
@@ -175,17 +176,20 @@ public class RoleManager {
 			this.logger.info("Removed patreon! Removed Role: ({}) | Global Role Removed: {} | User: @{}({})", role.getName(), didRemoveGlobal, member.getEffectiveName(), member.getUser().getId());
 		}
 
-		if (!this.config.disable.roleAdd) return;
+		if (this.config.disableFeatures.stream().noneMatch(s -> s.equals("Role"))) return;
+
 		this.log = false;
 	}
 
 	private void addRole(Guild guild, Member member, Role role) {
-		if (this.config.disable.roleAdd) return;
+		if (this.config.disableFeatures.stream().noneMatch(s -> s.equals("Role"))) return;
+
 		guild.addRoleToMember(member, role).queue();
 	}
 
 	private void removeRole(Guild guild, Member member, Role role) {
-		if (this.config.disable.roleAdd) return;
+		if (this.config.disableFeatures.stream().noneMatch(s -> s.equals("Role"))) return;
+
 		guild.removeRoleFromMember(member, role).queue();
 	}
 }

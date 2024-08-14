@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class SuzutsukiRoutes {
 	private final Logger logger;
@@ -57,7 +56,7 @@ public class SuzutsukiRoutes {
 		HttpServerRequest request = context.request();
 		HttpServerResponse response = context.response();
 
-		if (!endpoint.equals("/avatars") && !this.config.disable.restAuth) {
+		if (!endpoint.equals("/avatars") && this.config.disableFeatures.stream().anyMatch(s -> s.equals("Auth"))) {
 			String auth = request.getHeader("authorization");
 			if (auth == null || !auth.equals(this.config.tokens.getRest())) {
 				response.setStatusMessage("Unauthorized");

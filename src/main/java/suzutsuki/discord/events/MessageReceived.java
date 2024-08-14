@@ -114,7 +114,7 @@ public class MessageReceived extends ListenerAdapter {
 				Runtime runtime = Runtime.getRuntime();
 				MessageEmbed embed = new EmbedBuilder()
 					.setAuthor("Status", null, self.getEffectiveAvatarUrl())
-					.setColor(this.config.getColor())
+					.setColor(this.config.color)
 					.setDescription(
 						"```ml\n" +
 							"==== Caches\n" +
@@ -172,9 +172,9 @@ public class MessageReceived extends ListenerAdapter {
 					.map(entry -> "+ " + entry.guildId)
 					.toList();
 				MessageEmbed embed = new EmbedBuilder()
-					.setColor(this.config.getColor())
+					.setColor(this.config.color)
 					.setAuthor("List of subscribed guild(s)", null, self.getEffectiveAvatarUrl())
-					.setColor(this.config.getColor())
+					.setColor(this.config.color)
 					.setDescription("```diff\n" + String.join("\n", strings) + "```")
 					.setFooter("Subsribed Guild(s) [" + entries.size() + "/" + tier.getPatreonTierLimit() + "]", author.getEffectiveAvatarUrl())
 					.build();
@@ -185,7 +185,7 @@ public class MessageReceived extends ListenerAdapter {
 
 	private MessageEmbed createMessageEmbed(String message) {
 		return new EmbedBuilder()
-			.setColor(this.config.getColor())
+			.setColor(this.config.color)
 			.setAuthor(message, null, this.client.getSelfUser().getAvatarUrl())
 			.build();
 	}

@@ -1,42 +1,22 @@
 package suzutsuki.struct.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import java.util.InputMismatchException;
+import java.util.Optional;
 
-@JsonAutoDetect
 public class Tokens {
-	private String bot;
-	private String rest;
-	private String patreon;
+	private final String bot = Optional.ofNullable(System.getenv("BOT_TOKEN")).orElseThrow(() -> new InputMismatchException("Missing BOT_TOKEN env"));
+	private final String rest = Optional.ofNullable(System.getenv("REST_TOKEN")).orElseThrow(() -> new InputMismatchException("Missing REST_TOKEN env"));
+	private final String patreon = Optional.ofNullable(System.getenv("PATREON_TOKEN")).orElseThrow(() -> new InputMismatchException("Missing PATREON_TOKEN env"));
 
-	@JsonGetter("bot")
 	public String getBot() {
 		return this.bot;
 	}
 
-	@JsonGetter("rest")
 	public String getRest() {
 		return this.rest;
 	}
 
-	@JsonGetter("patreon")
 	public String getPatreon() {
 		return this.patreon;
-	}
-
-	@JsonSetter("bot")
-	public String setBot(String token) {
-		return this.bot = token;
-	}
-
-	@JsonSetter("rest")
-	public String setRest(String token) {
-		return this.rest = token;
-	}
-
-	@JsonSetter("patreon")
-	public String setPatreon(String token) {
-		return this.patreon = token;
 	}
 }
