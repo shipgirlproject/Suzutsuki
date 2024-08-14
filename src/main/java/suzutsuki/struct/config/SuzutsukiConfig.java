@@ -13,6 +13,7 @@ import java.util.List;
 
 @JsonAutoDetect
 public class SuzutsukiConfig {
+	public String host;
 	public int port;
 	public int threads;
 	public Tokens tokens;
