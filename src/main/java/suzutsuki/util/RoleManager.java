@@ -182,13 +182,13 @@ public class RoleManager {
 	}
 
 	private void addRole(Guild guild, Member member, Role role) {
-		if (this.config.disableFeatures.stream().noneMatch(s -> s.equals("Role"))) return;
+		if (this.config.disableFeatures.stream().anyMatch(s -> s.equals("Role"))) return;
 
 		guild.addRoleToMember(member, role).queue();
 	}
 
 	private void removeRole(Guild guild, Member member, Role role) {
-		if (this.config.disableFeatures.stream().noneMatch(s -> s.equals("Role"))) return;
+		if (this.config.disableFeatures.stream().anyMatch(s -> s.equals("Role"))) return;
 
 		guild.removeRoleFromMember(member, role).queue();
 	}

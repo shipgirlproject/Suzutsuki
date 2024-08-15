@@ -56,7 +56,7 @@ public class SuzutsukiRoutes {
 		HttpServerRequest request = context.request();
 		HttpServerResponse response = context.response();
 
-		if (!endpoint.equals("/avatars") && this.config.disableFeatures.stream().anyMatch(s -> s.equals("Auth"))) {
+		if (!endpoint.equals("/avatars") && this.config.disableFeatures.stream().noneMatch(s -> s.equals("Auth"))) {
 			String auth = request.getHeader("authorization");
 			if (auth == null || !auth.equals(this.config.tokens.getRest())) {
 				response.setStatusMessage("Unauthorized");
