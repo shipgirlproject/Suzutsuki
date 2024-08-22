@@ -246,11 +246,12 @@ public class SuzutsukiRoutes {
 			User user = this.client.getUserById(id);
 			if (user == null) continue;
 			AvatarUrlResponse avatar = new AvatarUrlResponse();
+			avatar.userName = user.getEffectiveName();
 			avatar.userId = user.getId();
 			avatar.avatarUrl = user.getEffectiveAvatarUrl() + "?size=512";
 			array.add(avatar);
 		}
 
-		response.end(JsonObject.mapFrom(array).toString());
+		response.end(new JsonArray(array).toString());
 	}
 }
