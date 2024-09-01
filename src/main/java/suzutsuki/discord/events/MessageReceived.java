@@ -72,10 +72,10 @@ public class MessageReceived extends ListenerAdapter {
 
 		String[] premium = {"subscribe", "unsubscribe", "guilds"};
 
-		Patreon patreon = null;
+		Patreon patreon = this.patreon.getPatreon(author.getId());
 		PatreonTier tier = null;
+
 		if (Arrays.asList(premium).contains(command)) {
-			patreon = this.patreon.getPatreon(author.getId());
 			if (patreon == null) {
 				channel.sendMessageEmbeds(this.createMessageEmbed("You are not yet a patreon, subscribe to access")).queue();
 				return;
