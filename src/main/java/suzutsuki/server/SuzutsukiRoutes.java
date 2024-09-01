@@ -84,8 +84,12 @@ public class SuzutsukiRoutes {
 				case "/patreons/tier":
 					this.checkTierInfo(request, response);
 					break;
+
 				case "/patreons":
 					this.currentPatreons(guild, response);
+					break;
+				case "/patreons/unparsed":
+					this.currentPatreonsUnparsed(response);
 					break;
 				case "/avatars":
 					this.getAvatars(response);
@@ -132,7 +136,7 @@ public class SuzutsukiRoutes {
 		}
 
 		for (Patreon entry : entries) {
-			PatreonTier tier = this.patreon.getTier(entry.userId);
+			PatreonTier tier = this.patreon.getTier(entry.tierId);
 			if (tier == null) continue;
 			PatreonUserResponse user = new PatreonUserResponse();
 			user.userId = entry.userId;
@@ -156,19 +160,14 @@ public class SuzutsukiRoutes {
 			return;
 		}
 
-		Patreons patreons = this.patreon.getPatreons();
+		Patreon patreon  = this.patreon.getPatreon(userId);
 
-		Optional<Patreon> opt = patreons.tiered
-			.stream()
-			.filter(p -> userId.equals(p.userId))
-			.findFirst();
-
-		Patreon patreon = (this.config.patreonCheckHonorsRole) ?
-			opt.orElseGet(() -> this.roles.getRolePatreon(userId)) :
-			opt.orElse(null);
+		if (patreon == null && this.config.patreonCheckHonorsRole) {
+			patreon = this.roles.getRolePatreon(userId);
+		}
 
 		if (patreon != null) {
-			PatreonTier tier = this.patreon.getTier(user.userId);
+			PatreonTier tier = this.patreon.getTier(patreon.tierId);
 			if (tier == null) throw new RuntimeException("Tier should not be null here");
 			user.tierName = tier.getTierName();
 			user.tierId = tier.getPatreonTierId();
@@ -236,6 +235,10 @@ public class SuzutsukiRoutes {
 		}
 
 		response.end(new JsonArray(array).toString());
+	}
+
+	private void currentPatreonsUnparsed(HttpServerResponse response) {
+		response.end(this.patreon.getPatreons().toString());
 	}
 
 	private void getAvatars(HttpServerResponse response) {

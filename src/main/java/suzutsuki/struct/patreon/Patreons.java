@@ -1,5 +1,6 @@
 package suzutsuki.struct.patreon;
 
+import io.vertx.core.json.JsonArray;
 import suzutsuki.struct.config.MockPatreon;
 import suzutsuki.struct.config.SuzutsukiConfig;
 import suzutsuki.struct.patreon.relationships.Relationship;
@@ -56,6 +57,7 @@ public class Patreons {
 				if (subscription.stream().noneMatch(data -> tier.getPatreonTierId().equals(data.id))) continue;
 
 				Patreon person = new Patreon(userId, tier.getTierName(), tier.getPatreonTierId());
+
 				// for some reason, patreon has 2 entitled tiers for some people
 				// we solve this by having the loop getTier() starting from the highest tier
 				// so that we always ensure that we get the highest subscribed tier of the user
@@ -64,5 +66,10 @@ public class Patreons {
 				this.tiered.add(person);
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return new JsonArray(this.tiered).encodePrettily();
 	}
 }

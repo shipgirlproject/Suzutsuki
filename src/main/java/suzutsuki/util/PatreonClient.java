@@ -52,7 +52,13 @@ public class PatreonClient {
 
 		this.fetch();
 
-		threads.scheduled.scheduleAtFixedRate(this::fetch, 30, 30, TimeUnit.SECONDS);
+		threads.scheduled.scheduleAtFixedRate(() -> {
+			try {
+				this.fetch();
+			} catch (Exception error) {
+				logger.error(error.toString(), error);
+			}
+		}, 30, 30, TimeUnit.SECONDS);
 
 		logger.info("Patreon related processes is now loaded and scheduled to run!");
 	}
@@ -65,19 +71,21 @@ public class PatreonClient {
 		return this.patreons;
 	}
 
-	public PatreonTier getTier(String userId) {
+	public Patreon getPatreon(String userId) {
 		Patreons patreons = this.getPatreons();
-		Patreon patreon = patreons.tiered.stream()
-			.filter(p -> p.userId.equals(userId))
-			.findFirst()
-			.orElse(null);
 
-		if (patreon == null) return null;
+		Optional<Patreon> result = patreons.tiered.stream()
+			.filter(p -> userId.equals(p.userId))
+			.findFirst();
 
+		return result.orElse(null);
+	}
+
+	public PatreonTier getTier(String tierId) {
 		List<PatreonTier> tiers = this.getTiers();
 
 		PatreonTier tier = tiers.stream()
-			.filter(t -> patreon.tierId.equals(t.getPatreonTierId()))
+			.filter(t -> tierId.equals(t.getPatreonTierId()))
 			.findFirst()
 			.orElse(null);
 

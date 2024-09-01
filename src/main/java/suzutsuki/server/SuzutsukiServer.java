@@ -56,6 +56,11 @@ public class SuzutsukiServer {
 			.handler((RoutingContext context) -> this.routes.trigger("/patreons", context))
 			.handler(this.routes::triggerFail)
 			.enable();
+		this.router.route(HttpMethod.GET, "/patreons/unparsed")
+			.produces("application/json")
+			.handler((RoutingContext context) -> this.routes.trigger("/patreons/unparsed", context))
+			.handler(this.routes::triggerFail)
+			.enable();
 		this.router.route(HttpMethod.GET, "/avatars")
 			.produces("application/json")
 			.handler((RoutingContext context) -> this.routes.trigger("/avatars", context))

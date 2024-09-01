@@ -72,28 +72,17 @@ public class MessageReceived extends ListenerAdapter {
 
 		String[] premium = {"subscribe", "unsubscribe", "guilds"};
 
-		Patreon patreon;
+		Patreon patreon = null;
 		PatreonTier tier = null;
 		if (Arrays.asList(premium).contains(command)) {
-			patreon = this.patreon.getPatreons()
-				.tiered
-				.stream()
-				.filter(p -> p.userId.equals(author.getId()))
-				.findFirst()
-				.orElse(null);
+			patreon = this.patreon.getPatreon(author.getId());
 			if (patreon == null) {
 				channel.sendMessageEmbeds(this.createMessageEmbed("You are not yet a patreon, subscribe to access")).queue();
 				return;
 			}
 
 			if (command.equals("subscribe") || command.equals("guilds")) {
-				tier = this.patreon.getTiers()
-					.stream()
-					.filter(t -> t.getPatreonTierId().equals(patreon.tierId))
-					.findFirst()
-					.orElse(null);
-
-				assert tier != null;
+				tier = this.patreon.getTier(patreon.tierId);
 
 				if (command.equals("subscribe")) {
 					int count = this.store.size(author.getId());
@@ -123,6 +112,23 @@ public class MessageReceived extends ListenerAdapter {
 							"==== Memory\n" +
 							"JVM Free :: " + Memory.toHumanReadableSIPrefixes(runtime.freeMemory()) + "\n" +
 							"JVM Max  :: " + Memory.toHumanReadableSIPrefixes(runtime.maxMemory()) + "\n" +
+							"```"
+					)
+					.build();
+				channel.sendMessageEmbeds(embed).queue();
+				break;
+			}
+			case "check": {
+				if (patreon == null) {
+					channel.sendMessageEmbeds(this.createMessageEmbed("No data found for your user")).queue();
+					break;
+				}
+				MessageEmbed embed = new EmbedBuilder()
+					.setAuthor("Patreon Status", null, self.getEffectiveAvatarUrl())
+					.setColor(this.config.color)
+					.setDescription(
+						"```json\n" +
+							patreon.toString() + "\n" +
 							"```"
 					)
 					.build();
