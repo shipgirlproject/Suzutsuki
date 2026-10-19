@@ -6,11 +6,11 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(22)
     }
 }
 
-version = "2.5.0"
+version = "2.5.1"
 
 archivesBaseName = "suzutsuki"
 

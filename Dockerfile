@@ -10,7 +10,7 @@ COPY . /root/build
 
 RUN gradle build --no-daemon
 
-FROM openjdk:22-slim
+FROM eclipse-temurin:22-jre-alpine
 
 WORKDIR /usr/src/app
 
