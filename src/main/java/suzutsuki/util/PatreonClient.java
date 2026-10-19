@@ -1,6 +1,5 @@
 package suzutsuki.util;
 
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
@@ -212,22 +211,25 @@ public class PatreonClient {
 		this.threads.normal.execute(this::schedule);
 	}
 
+	// note: im pretty sure i dont need to do this in newer version but meh, if it works it works for now
 	private JsonObject get(String url) {
-		CompletableFuture<AsyncResult<HttpResponse<Buffer>>> future = new CompletableFuture<>();
+		CompletableFuture<HttpResponse<Buffer>> future = new CompletableFuture<>();
 
 		this.client.requestAbs(HttpMethod.GET, url)
 			.putHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
 			.putHeader("Authorization", "Bearer " + this.config.tokens.getPatreon())
-			.send();
+			.send()
+			.toCompletionStage()
+			.toCompletableFuture()
+			.whenComplete((response, throwable) -> {
+				if (throwable != null) {
+					future.completeExceptionally(throwable);
+				} else {
+					future.complete(response);
+				}
+			});
 
-		AsyncResult<HttpResponse<Buffer>> async = future.join();
-
-		if (async.failed()) {
-			Throwable cause = async.cause();
-			throw new RuntimeException(cause.getMessage(), cause);
-		}
-
-		HttpResponse<Buffer> response = async.result();
+		HttpResponse<Buffer> response = future.join();
 
 		return response.bodyAsJsonObject();
 	}

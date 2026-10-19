@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
-import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 import org.slf4j.Logger;
 import suzutsuki.database.SuzutsukiStore;
 import suzutsuki.struct.config.SuzutsukiConfig;
@@ -20,12 +19,10 @@ import suzutsuki.struct.rest.*;
 import suzutsuki.util.ActivityToReadable;
 import suzutsuki.util.PatreonClient;
 import suzutsuki.util.RoleManager;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class SuzutsukiRoutes {
 	private final Logger logger;
