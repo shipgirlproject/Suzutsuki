@@ -24,8 +24,12 @@ public class SuzutsukiDiscord {
 				GatewayIntent.GUILD_PRESENCES,
 				GatewayIntent.MESSAGE_CONTENT
 			)
+			.enableCache(
+				CacheFlag.ACTIVITY,
+				CacheFlag.CLIENT_STATUS,
+				CacheFlag.ONLINE_STATUS
+			)
 			.disableCache(
-				CacheFlag.EMOJI,
 				CacheFlag.FORUM_TAGS,
 				CacheFlag.ROLE_TAGS,
 				CacheFlag.SCHEDULED_EVENTS,

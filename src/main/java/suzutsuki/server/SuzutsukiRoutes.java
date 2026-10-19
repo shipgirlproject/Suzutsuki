@@ -276,8 +276,9 @@ public class SuzutsukiRoutes {
 
 		OwnerStatusResponse body = new OwnerStatusResponse();
 		body.userName = member.getUser().getName();
-		body.displayName = member.getEffectiveName();
+		body.userId = member.getUser().getId();
 		body.avatarUrl = member.getEffectiveAvatarUrl() + "?size=512";
+		body.displayName = member.getEffectiveName();
 		body.status = member.getOnlineStatus().toString();
 		body.activities = new ArrayList<>();
 
