@@ -4,7 +4,13 @@ plugins {
     id "java"
 }
 
-version = "2.4.5"
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+version = "2.5.0"
 
 archivesBaseName = "suzutsuki"
 
@@ -21,11 +27,11 @@ repositories {
 dependencies {
     testImplementation('junit:junit:4.13.1')
     implementation("com.h2database:h2:2.3.230")
-    implementation("net.dv8tion:JDA:5.0.1")
-    implementation("io.vertx:vertx-core:4.5.9")
-    implementation("io.vertx:vertx-web:4.5.9")
-    implementation("io.vertx:vertx-web-client:4.5.9")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.17.2")
+    implementation("net.dv8tion:JDA:6.7.0")
+    implementation('io.vertx:vertx-core:5.2.1')
+    implementation('io.vertx:vertx-web:5.1.7')
+    implementation('io.vertx:vertx-web-client:5.1.5')
+    implementation('com.fasterxml.jackson.core:jackson-core:2.22.3')
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.2")
     implementation("org.json:json:20240303")
     implementation("org.slf4j:slf4j-api:2.0.13")

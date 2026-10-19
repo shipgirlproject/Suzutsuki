@@ -76,6 +76,6 @@ public class SuzutsukiServer {
 	private void startServer() {
 		this.server.requestHandler(this.router)
 			.listen(this.config.port, this.config.host)
-			.andThen((_) -> this.logger.info("API routes set & running => {}:{}", this.config.host, this.config.port));
+			.andThen((_server) -> this.logger.info("API routes set & running => {}:{}", this.config.host, this.config.port));
 	}
 }

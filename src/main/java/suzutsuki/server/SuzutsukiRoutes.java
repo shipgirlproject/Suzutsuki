@@ -6,9 +6,10 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
+import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 import org.slf4j.Logger;
 import suzutsuki.database.SuzutsukiStore;
 import suzutsuki.struct.config.SuzutsukiConfig;
@@ -16,6 +17,7 @@ import suzutsuki.struct.patreon.Patreon;
 import suzutsuki.struct.patreon.Patreons;
 import suzutsuki.struct.patreon.tiers.PatreonTier;
 import suzutsuki.struct.rest.*;
+import suzutsuki.util.ActivityToReadable;
 import suzutsuki.util.PatreonClient;
 import suzutsuki.util.RoleManager;
 
@@ -93,6 +95,8 @@ public class SuzutsukiRoutes {
 					break;
 				case "/avatars":
 					this.getAvatars(response);
+				case "/owner/status":
+					this.getOwnerStatus(response);
 					break;
 				default:
 					throw new RuntimeException("No such route saved for: " + endpoint);
@@ -256,5 +260,60 @@ public class SuzutsukiRoutes {
 		}
 
 		response.end(new JsonArray(array).toString());
+	}
+
+	private void getOwnerStatus(HttpServerResponse response) {
+		Guild guild = this.client.getGuildById(this.config.guildId);
+		if (guild == null) {
+			throw new RuntimeException("Tried to get owner user status, but guild id is not set in config");
+		}
+
+		Member member = guild.getMemberById(this.config.ownerUserId);
+		if (member == null) {
+			throw new RuntimeException("Tried to get owner user status, but owner id is not set in config");
+		}
+
+		OwnerStatusResponse body = new OwnerStatusResponse();
+		body.userName = member.getUser().getName();
+		body.displayName = member.getEffectiveName();
+		body.avatarUrl = member.getEffectiveAvatarUrl() + "?size=512";
+		body.status = member.getOnlineStatus().toString();
+		body.activities = new ArrayList<>();
+
+		for (Activity activity : member.getActivities()) {
+			OwnerActivityResponse a = new OwnerActivityResponse();
+			a.type = ActivityToReadable.convertActivityToReadableName(activity);
+			a.name = activity.getName();
+			a.url = activity.getUrl();
+
+			if (activity.getEmoji() != null) {
+				EmojiUnion emoji = activity.getEmoji();
+				String urlOrUnicode;
+				if (emoji.getType() == Emoji.Type.CUSTOM) {
+					urlOrUnicode = emoji.asCustom().getImageUrl();
+				} else {
+					urlOrUnicode = emoji.asUnicode().getName();
+				}
+				a.emoji = urlOrUnicode;
+			}
+
+			if (activity.getTimestamps() != null) {
+				a.start = activity.getTimestamps().getStart();
+				a.end = activity.getTimestamps().getEnd();
+			}
+
+			RichPresence rich = activity.asRichPresence();
+
+			if (rich != null) {
+				a.details = rich.getDetails();
+				a.state = rich.getState();
+				a.largeImage = rich.getLargeImage() == null ? null : rich.getLargeImage().getUrl();
+				a.smallImage = rich.getSmallImage() == null ? null : rich.getSmallImage().getUrl();
+			}
+
+			body.activities.add(a);
+		}
+
+		response.putHeader("Content-Type", "application/json").end(JsonObject.mapFrom(body).toString());
 	}
 }

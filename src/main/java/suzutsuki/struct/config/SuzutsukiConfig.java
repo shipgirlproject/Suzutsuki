@@ -36,6 +36,7 @@ public class SuzutsukiConfig {
 	public List<MockPatreon> mockPatreons;
 	public Boolean patreonCheckHonorsRole;
 	public List<String> avatarUserIds;
+	public String ownerUserId;
 	public int storeCleanDelayTimeMinutes;
 
 	public static SuzutsukiConfig loadConfig(String directory) throws IOException {

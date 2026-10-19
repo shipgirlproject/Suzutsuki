@@ -218,7 +218,7 @@ public class PatreonClient {
 		this.client.requestAbs(HttpMethod.GET, url)
 			.putHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
 			.putHeader("Authorization", "Bearer " + this.config.tokens.getPatreon())
-			.send(future::complete);
+			.send();
 
 		AsyncResult<HttpResponse<Buffer>> async = future.join();
 
