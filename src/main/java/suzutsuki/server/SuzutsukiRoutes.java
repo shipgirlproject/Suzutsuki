@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
+import net.dv8tion.jda.api.utils.ImageFormat;
 import org.slf4j.Logger;
 import suzutsuki.database.SuzutsukiStore;
 import suzutsuki.struct.config.SuzutsukiConfig;
@@ -256,7 +257,7 @@ public class SuzutsukiRoutes {
 			AvatarUrlResponse avatar = new AvatarUrlResponse();
 			avatar.userName = user.getEffectiveName();
 			avatar.userId = user.getId();
-			avatar.avatarUrl = user.getEffectiveAvatarUrl() + "?size=512";
+			avatar.avatarUrl = user.getEffectiveAvatar(ImageFormat.GIF).getUrl(512);
 			array.add(avatar);
 		}
 
@@ -277,8 +278,9 @@ public class SuzutsukiRoutes {
 		OwnerStatusResponse body = new OwnerStatusResponse();
 		body.userName = member.getUser().getName();
 		body.userId = member.getUser().getId();
-		body.avatarUrl = member.getEffectiveAvatarUrl() + "?size=512";
+		body.avatarUrl = member.getEffectiveAvatar(ImageFormat.GIF).getUrl(512);
 		body.displayName = member.getEffectiveName();
+		body.bannerUrl = member.getBanner() != null ? member.getEffectiveAvatarUrl(ImageFormat.GIF) : null;
 		body.status = member.getOnlineStatus().toString();
 		body.activities = new ArrayList<>();
 
