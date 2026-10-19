@@ -66,6 +66,11 @@ public class SuzutsukiServer {
 			.handler((RoutingContext context) -> this.routes.trigger("/avatars", context))
 			.failureHandler(this.routes::triggerFail)
 			.enable();
+		this.router.route(HttpMethod.GET, "/owner")
+			.produces("application/json")
+			.handler((RoutingContext context) -> this.routes.trigger("/owner", context))
+			.failureHandler(this.routes::triggerFail)
+			.enable();
 		this.router.route("/*")
 			.handler(StaticHandler.create().setIndexPage("index.html"))
 			.failureHandler(this.routes::triggerFail)

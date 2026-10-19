@@ -21,6 +21,7 @@ import suzutsuki.util.PatreonClient;
 import suzutsuki.util.RoleManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,7 +56,9 @@ public class SuzutsukiRoutes {
 		HttpServerRequest request = context.request();
 		HttpServerResponse response = context.response();
 
-		if (!endpoint.equals("/avatars") && this.config.disableFeatures.stream().noneMatch(s -> s.equals("Auth"))) {
+		String[] ignoredAuth = { "/avatars", "/owner" };
+
+		if (Arrays.stream(ignoredAuth).noneMatch(endpoint::equals) && this.config.disableFeatures.stream().noneMatch(s -> s.equals("Auth"))) {
 			String auth = request.getHeader("authorization");
 			if (auth == null || !auth.equals(this.config.tokens.getRest())) {
 				response.setStatusMessage("Unauthorized");
@@ -92,7 +95,8 @@ public class SuzutsukiRoutes {
 					break;
 				case "/avatars":
 					this.getAvatars(response);
-				case "/owner/status":
+					break;
+				case "/owner":
 					this.getOwnerStatus(response);
 					break;
 				default:
